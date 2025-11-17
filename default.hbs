@@ -13,6 +13,13 @@
     <link rel="preload" as="style" href="{{asset "built/screen.css"}}" />
     <link rel="preload" as="script" href="{{asset "built/casper.js"}}" />
 
+    {{!-- Calendly Widget --}}
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+    {{!-- International Telephone Input --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.1/build/css/intlTelInput.css">
+
     {{!-- Theme assets - use the {asset} helper to reference styles & scripts,
     this will take care of caching and cache-busting automatically --}}
     <link rel="stylesheet" type="text/css" href="{{asset "built/screen.css"}}" />
@@ -88,12 +95,32 @@
         </div>
     </footer>
 
+    {{!-- Mobile Action Buttons (visible only on mobile) --}}
+    <div class="mobile-action-buttons">
+        <a href="https://www-dev.wishup.co/hire" class="mobile-action-btn mobile-action-primary">
+            Hire Now
+        </a>
+        <button class="mobile-action-btn mobile-action-secondary" id="mobile-consultation-trigger">
+            Free Consultation
+        </button>
+    </div>
+
+    {{!-- Global Form Modal (for mobile consultation) --}}
+    <div class="form-modal" id="form-modal" style="display: none;">
+        {{> "application-form" mode="modal" show_header=true title="Get Started with Wishup" subtitle="Fill out the form below and we'll get back to you shortly"}}
+    </div>
+
 </div>
 {{!-- /.viewport --}}
 
 {{#is "post, page"}}
     {{> "lightbox"}}
 {{/is}}
+
+{{!-- Include application form assets when needed --}}
+{{!-- Add data-wishup-form="true" to any page/post to enable the form --}}
+<link rel="preload" as="style" href="{{asset "built/application-form.css"}}" />
+<link rel="stylesheet" type="text/css" href="{{asset "built/application-form.css"}}" />
 
 {{!-- Scripts - handle member signups, responsive videos, infinite scroll, floating headers, and galleries --}}
 <script
@@ -112,6 +139,12 @@ $(document).ready(function () {
     $(".gh-content").fitVids();
 });
 </script>
+
+{{!-- Application Form Script --}}
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.1/build/js/intlTelInput.min.js"></script>
+<script src="{{asset "built/fetchGeoLocation.js"}}"></script>
+<script src="{{asset "built/calendly-helper.js"}}"></script>
+<script src="{{asset "built/application-form.js"}}"></script>
 
 {{!-- Ghost outputs required functional scripts with this tag - it should always be the last thing before the closing body tag --}}
 {{ghost_foot}}

@@ -46,10 +46,36 @@ function hbs(done) {
 
 function css(done) {
     pump([
-        src('assets/css/*.css', {sourcemaps: true}),
+        src('assets/css/screen.css', {sourcemaps: true}),
         postcss([
             easyimport,
             colorFunction(),
+            autoprefixer(),
+            cssnano()
+        ]),
+        dest('assets/built/', {sourcemaps: '.'}),
+        livereload()
+    ], handleError(done));
+}
+
+function globalCss(done) {
+    pump([
+        src('assets/css/global.css', {sourcemaps: true}),
+        postcss([
+            easyimport,
+            colorFunction(),
+            autoprefixer(),
+            cssnano()
+        ]),
+        dest('assets/built/', {sourcemaps: '.'}),
+        livereload()
+    ], handleError(done));
+}
+
+function applicationFormCss(done) {
+    pump([
+        src('assets/css/application-form.css', {sourcemaps: true}),
+        postcss([
             autoprefixer(),
             cssnano()
         ]),
@@ -63,11 +89,37 @@ function js(done) {
         src([
             // pull in lib files first so our own code can depend on it
             'assets/js/lib/*.js',
-            'assets/js/*.js'
+            'assets/js/dropdown.js',
+            'assets/js/infinite-scroll.js',
+            'assets/js/lightbox.js'
         ], {sourcemaps: true}),
         concat('casper.js'),
         uglify(),
         dest('assets/built/', {sourcemaps: '.'}),
+        livereload()
+    ], handleError(done));
+}
+
+function fetchGeoLocationJs(done) {
+    pump([
+        src('assets/js/fetchGeoLocation.js', {sourcemaps: false}),
+        dest('assets/built/'),
+        livereload()
+    ], handleError(done));
+}
+
+function calendlyHelperJs(done) {
+    pump([
+        src('assets/js/calendly-helper.js', {sourcemaps: false}),
+        dest('assets/built/'),
+        livereload()
+    ], handleError(done));
+}
+
+function applicationFormJs(done) {
+    pump([
+        src('assets/js/application-form.js', {sourcemaps: false}),
+        dest('assets/built/'),
         livereload()
     ], handleError(done));
 }
@@ -80,6 +132,7 @@ function zipper(done) {
             '**',
             '!node_modules', '!node_modules/**',
             '!dist', '!dist/**',
+            '!assets/built/**/*.map',
             '!yarn-error.log',
             '!yarn.lock',
             '!gulpfile.js'
@@ -89,11 +142,11 @@ function zipper(done) {
     ], handleError(done));
 }
 
-const cssWatcher = () => watch('assets/css/**', css);
-const jsWatcher = () => watch('assets/js/**', js);
+const cssWatcher = () => watch('assets/css/**', parallel(css, globalCss, applicationFormCss));
+const jsWatcher = () => watch('assets/js/**', parallel(js, fetchGeoLocationJs, calendlyHelperJs, applicationFormJs));
 const hbsWatcher = () => watch(['*.hbs', 'partials/**/*.hbs'], hbs);
 const watcher = parallel(cssWatcher, jsWatcher, hbsWatcher);
-const build = series(css, js);
+const build = series(parallel(css, globalCss, applicationFormCss), parallel(js, fetchGeoLocationJs, calendlyHelperJs, applicationFormJs));
 
 exports.build = build;
 exports.zip = series(build, zipper);

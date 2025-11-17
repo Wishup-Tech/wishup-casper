@@ -82,15 +82,25 @@ into the {body} tag of the default.hbs template --}}
 
     </header>
 
-    <section class="gh-content gh-canvas">
-        {{content}}
-    </section>
+    {{!-- 2/3 content + 1/3 form layout --}}
+    <div class="post-content-with-application">
+        <div class="post-main-content">
+            <section class="gh-content gh-canvas">
+                {{content}}
+            </section>
 
-    {{#if comments}}
-        <section class="article-comments gh-canvas">
-            {{comments}}
-        </section>
-    {{/if}}
+            {{#if comments}}
+                <section class="article-comments gh-canvas">
+                    {{comments}}
+                </section>
+            {{/if}}
+        </div>
+
+        {{!-- Sidebar Application Form (Desktop only) --}}
+        <aside class="post-sidebar-form">
+            {{> "application-form" mode="sidebar" show_header=true title="Get in Touch" subtitle="Fill out the form and we’ll get back to you within 24 hours." }}
+        </aside>
+    </div>
 
 </article>
 </main>
