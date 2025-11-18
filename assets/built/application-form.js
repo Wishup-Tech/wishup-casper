@@ -14,6 +14,8 @@
         defaultServiceIndia: 'looking-job',
         defaultServiceOthers: 'hire-va',
         emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        // Countries eligible for Calendly consultation (only for hire-va and hire-bookkeeper)
+        calendlyEligibleCountries: ['us', 'ca', 'gb', 'uk', 'au', 'qa', 'sa', 'il', 'ae', 'nl', 'ie', 'nz', 'sg'],
     };
 
     // Global reference to intl-tel-input instance
@@ -592,7 +594,7 @@
                 // Show success message
                 const messageEl = formElement.querySelector('#form-message');
                 if (messageEl) {
-                    messageEl.textContent = 'Form submitted successfully!';
+                    messageEl.textContent = 'Thanks for your interest!';
                     messageEl.className = 'form-message visible success';
                 }
             } catch (error) {
@@ -641,17 +643,29 @@
                 document.body.style.overflow = '';
             }
 
-            // Open Calendly with form data (both desktop and mobile)
-            const calendlyUrl = this.getCalendlyUrl();
-            console.debug('[Form] Opening Calendly after submission');
-            console.debug('[Form] Phone for Calendly (no +):', fullPhoneNumber);
+            // Determine if Calendly should be opened
+            // Only show Calendly for hire-va or hire-bookkeeper services
+            // AND only if user's actual LOCATION (from Cloudflare/IP detection) is in eligible countries
+            // Note: We use LocationDetector.userCountry (IP-based), NOT phone selection
+            const shouldShowCalendly = this.shouldShowCalendly(formData.service, LocationDetector.userCountry);
             
-            if (typeof window.openCalendly === 'function') {
-                window.openCalendly(calendlyUrl, {
-                    name: formData.name,
-                    email: formData.email,
-                    phone: fullPhoneNumber // Pass phone without + sign
-                });
+            if (shouldShowCalendly) {
+                // Open Calendly with form data (both desktop and mobile)
+                const calendlyUrl = this.getCalendlyUrl();
+                console.debug('[Form] Opening Calendly after submission');
+                console.debug('[Form] Service:', formData.service);
+                console.debug('[Form] User Location (Cloudflare):', LocationDetector.userCountry);
+                console.debug('[Form] Phone for Calendly (no +):', fullPhoneNumber);
+                
+                if (typeof window.openCalendly === 'function') {
+                    window.openCalendly(calendlyUrl, {
+                        name: formData.name,
+                        email: formData.email,
+                        phone: fullPhoneNumber // Pass phone without + sign
+                    });
+                }
+            } else {
+                console.debug('[Form] Calendly not shown - Service:', formData.service, 'User Location:', LocationDetector.userCountry);
             }
 
             // Reset form and hide loading after short delay
@@ -683,6 +697,33 @@
                 || trigger?.getAttribute('data-calendly-url')
                 || form?.getAttribute('data-calendly-url')
                 || 'https://calendly.com/neelesh-rangwani-wishup/30min';
+        },
+
+        shouldShowCalendly(service, userLocation) {
+            // Don't show Calendly for job applications
+            if (service === 'looking-job') {
+                return false;
+            }
+
+            // Only show Calendly for hire-va and hire-bookkeeper
+            if (service !== 'hire-va' && service !== 'hire-bookkeeper') {
+                return false;
+            }
+
+            // Check if user's actual location (from Cloudflare/IP) is in eligible list
+            // Note: This is based on geolocation, not phone number country selection
+            if (!userLocation) {
+                console.warn('[Calendly] No location detected, not showing Calendly');
+                return false;
+            }
+
+            // Convert location to lowercase for comparison
+            const locationLower = userLocation.toLowerCase();
+            const isEligible = CONFIG.calendlyEligibleCountries.includes(locationLower);
+            
+            console.debug('[Calendly] User Location:', locationLower, 'Eligible:', isEligible);
+            
+            return isEligible;
         },
 
         getVisitHistory() {
@@ -833,7 +874,7 @@
                 const result = await response.json();
                 console.log('Form submitted successfully:', result);
                 
-                utils.showMessage('Form submitted successfully!', 'success');
+                utils.showMessage('Thanks for your interest!', 'success');
                 return result;
             } catch (error) {
                 console.error('API submission failed:', error);

@@ -182,9 +182,9 @@
 .form-input:-webkit-autofill:hover,
 .form-input:-webkit-autofill:focus,
 .form-input:-webkit-autofill:active {
-  -webkit-background-clip: text !important;
   -webkit-text-fill-color: var(--form-text) !important;
   transition: background-color 5000s ease-in-out 0s !important;
+  box-shadow: 0 0 0 1000px var(--form-input-bg) inset !important;
 }
 
 /* Ensure icons persist on all input states */
