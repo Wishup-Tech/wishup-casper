@@ -486,10 +486,38 @@
             const firstName = nameParts[0] || '';
             const lastName = nameParts.slice(1).join(' ') || '';
 
-            // Get phoneInput instance for this form
-            const phoneInputInstance = phoneInputElement && window.phoneInputInstances ? 
-                window.phoneInputInstances.find(instance => instance.telInput === phoneInputElement) : 
-                phoneInput;
+            // Get phoneInput instance for this SPECIFIC form
+            // CRITICAL: We must get the country from the phone input at submission time,
+            // not at initialization, because the user may have changed the country dropdown
+            let phoneInputInstance = null;
+            if (phoneInputElement && window.phoneInputInstances && window.phoneInputInstances.length > 0) {
+                // Find the instance that matches THIS form's phone input
+                phoneInputInstance = window.phoneInputInstances.find(instance => 
+                    instance && instance.telInput === phoneInputElement
+                );
+            }
+            
+            // Fallback to global phoneInput if we only have one instance
+            if (!phoneInputInstance && phoneInput) {
+                phoneInputInstance = phoneInput;
+            }
+
+            console.log('[handleSubmit] Phone instance found:', !!phoneInputInstance);
+            console.log('[handleSubmit] Phone input element:', phoneInputElement);
+            console.log('[handleSubmit] Total phone instances:', window.phoneInputInstances?.length || 0);
+            
+            // Get country data from phone input at submission time (captures user's selection)
+            let phoneCountryData = { dialCode: '', iso2: '' };
+            if (phoneInputInstance) {
+                try {
+                    phoneCountryData = phoneInputInstance.getSelectedCountryData();
+                    console.log('[handleSubmit] Phone country data from instance:', phoneCountryData);
+                } catch (e) {
+                    console.error('[handleSubmit] Failed to get country data:', e);
+                }
+            } else {
+                console.warn('[handleSubmit] No phone instance found - will use IP-detected country');
+            }
 
             // Get form data from THIS form
             const formData = {
@@ -499,15 +527,21 @@
                 lastName: lastName,
                 email: formElement.querySelector('#form-email').value.trim(),
                 phone: rawPhoneValue, // Raw phone digits (e.g., 1234567890)
-                phoneCountryCode: phoneInputInstance ? phoneInputInstance.getSelectedCountryData().dialCode : '',
-                phoneCountry: phoneInputInstance ? phoneInputInstance.getSelectedCountryData().iso2 : '',
+                phoneCountryCode: phoneCountryData.dialCode || '',
+                phoneCountry: phoneCountryData.iso2 || '', // This captures the CURRENT selection at submit time
                 experience: formElement.querySelector('#form-experience').value.trim(),
                 country: LocationDetector.userCountry,
                 isIndia: LocationDetector.isIndia,
                 submittedAt: new Date().toISOString()
             };
 
+            console.log('[handleSubmit] ===== FORM DATA DEBUG =====');
             console.log('[handleSubmit] Full formData:', formData);
+            console.log('[handleSubmit] formData.phoneCountry (from dropdown):', formData.phoneCountry);
+            console.log('[handleSubmit] formData.country (from LocationDetector):', formData.country);
+            console.log('[handleSubmit] LocationDetector.userCountry:', LocationDetector.userCountry);
+            console.log('[handleSubmit] phoneCountryData:', phoneCountryData);
+            console.log('[handleSubmit] ===============================');
 
             // Validate - pass formElement to get correct phone input
             const errors = Validator.validateForm(formData, formElement);
@@ -682,6 +716,17 @@
             return categoryMap[service] || service;
         },
 
+        getVaOrClient(service) {
+            // For both hire-va and hire-bookkeeper, return "I want to hire a Virtual Assistant"
+            // For looking-job, return "I'm looking for a job"
+            if (service === 'hire-va' || service === 'hire-bookkeeper') {
+                return 'I want to hire a Virtual Assistant';
+            } else if (service === 'looking-job') {
+                return "I want to work as a Virtual Assistant";
+            }
+            return 'I want to hire a Virtual Assistant'; // Default
+        },
+
         async getUserIP() {
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
@@ -705,9 +750,35 @@
 
                 // Map service to lead category
                 const leadCategory = this.getLeadCategory(formData.service);
+                
+                // Map service to va_or_client field
+                const vaOrClient = this.getVaOrClient(formData.service);
 
-                // Get country code in lowercase
-                const countryCode = formData.phoneCountry ? formData.phoneCountry.toLowerCase() : null;
+                // Get country code: Use phone input selected country if user changed it, otherwise use IP-detected country
+                let countryCode = null;
+                
+                console.log('[API] ===== COUNTRY CODE DEBUG =====');
+                console.log('[API] formData.phoneCountry:', formData.phoneCountry);
+                console.log('[API] formData.phoneCountry type:', typeof formData.phoneCountry);
+                console.log('[API] formData.phoneCountry.trim():', formData.phoneCountry ? formData.phoneCountry.trim() : 'N/A');
+                console.log('[API] formData.country:', formData.country);
+                console.log('[API] formData.country type:', typeof formData.country);
+                console.log('[API] LocationDetector.userCountry:', LocationDetector.userCountry);
+                
+                if (formData.phoneCountry && formData.phoneCountry.trim() !== '') {
+                    // User selected a country in phone input - use that (already lowercase ISO2 like 'us', 'in', 'au')
+                    countryCode = formData.phoneCountry.toLowerCase();
+                    console.log('[API] Using phoneCountry (user selected):', countryCode);
+                } else if (formData.country) {
+                    // Use IP-detected country from Cloudflare trace (uppercase like 'US', 'IN' - convert to lowercase)
+                    countryCode = formData.country.toLowerCase();
+                    console.log('[API] Using formData.country (IP-detected):', countryCode);
+                } else {
+                    console.log('[API] No country available - countryCode will be null');
+                }
+
+                console.log('[API] Final countryCode:', countryCode);
+                console.log('[API] ================================');
 
                 // Get phone number - remove + sign but keep country code digits
                 let phoneNumber = null;
@@ -731,12 +802,12 @@
                     last_name: formData.lastName || null,
                     lead_category: leadCategory || null,
                     email: formData.email || null,
-                    va_or_client: leadCategory || null,
+                    va_or_client: vaOrClient || null,
                     phone: phoneNumber,
                     tell_us_more: formData.experience || null,
                     country_code: countryCode,
-                    triggerSource: 'Blogs',
-                    lead_title: null,
+                    triggerSource: window.location.href || null,
+                    lead_title: "N.A",
                     whatsapp_consent: false,
                     source: window.location.href || null,
                     page_visits: pageVisits || [],
