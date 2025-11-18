@@ -9,534 +9,543 @@
 /* ---------------------------------------------------------- */
 
 .wishup-application-form {
-    --form-bg: #ffffff;
-    --form-border: #e5e7eb;
-    --form-input-bg: #ffffff;
-    --form-input-border: #d1d5db;
-    --form-input-focus: #3b82f6;
-    --form-text: #111827;
-    --form-text-secondary: #6b7280;
-    --form-placeholder: #9ca3af;
-    --form-error: #ef4444;
-    --form-success: #10b981;
-    --form-shadow: rgba(0, 0, 0, 0.1);
-    --form-radius: 8px;
+  --form-bg: #ffffff;
+  --form-border: #e5e7eb;
+  --form-input-bg: #ffffff;
+  --form-input-border: #d1d5db;
+  --form-input-focus: #3b82f6;
+  --form-text: #111827;
+  --form-text-secondary: #6b7280;
+  --form-placeholder: #9ca3af;
+  --form-error: #ef4444;
+  --form-success: #10b981;
+  --form-shadow: rgba(0, 0, 0, 0.1);
+  --form-radius: 8px;
 }
 
 /* Dark mode support */
 .dark-mode .wishup-application-form {
-    --form-bg: #1f2937;
-    --form-border: #374151;
-    --form-input-bg: #111827;
-    --form-input-border: #4b5563;
-    --form-text: #f9fafb;
-    --form-text-secondary: #9ca3af;
-    --form-placeholder: #6b7280;
-    --form-shadow: rgba(0, 0, 0, 0.3);
+  --form-bg: #1f2937;
+  --form-border: #374151;
+  --form-input-bg: #111827;
+  --form-input-border: #4b5563;
+  --form-text: #f9fafb;
+  --form-text-secondary: #9ca3af;
+  --form-placeholder: #6b7280;
+  --form-shadow: rgba(0, 0, 0, 0.3);
 }
 
 /* Base Form Container */
 .wishup-application-form {
-    width: 100%;
-    max-width: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    box-sizing: border-box;
-    display: block;
-    visibility: visible;
+  width: 100%;
+  max-width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", sans-serif;
+  box-sizing: border-box;
+  display: block;
+  visibility: visible;
 }
 
 .form-container {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 0 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    max-width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #f3f4f6;
-    overflow: hidden;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #f3f4f6;
+  /* Allow dropdowns and overlays to extend without blanking the content */
+  overflow: visible;
 }
 
 /* Form Header */
 .form-header {
-    margin: 0;
-    padding: 20px;
-    text-align: left;
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-    border-bottom: 1px solid #e5e7eb;
+  margin: 0;
+  padding: 20px;
+  text-align: left;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-bottom: 1px solid #e5e7eb;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 }
 
 .form-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 4px;
-    line-height: 1.3;
-    text-align: left;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+  line-height: 1.3;
+  text-align: left;
 }
 
 .form-subtitle {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 0;
-    line-height: 1.5;
-    text-align: left;
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+  text-align: left;
 }
 
 /* Form Groups */
 .form-group {
-    margin-bottom: 12px;
-    position: relative;
-    display: block;
-    visibility: visible;
+  margin-bottom: 12px;
+  position: relative;
+  display: block;
+  visibility: visible;
 }
 
 .form-group.form-group-phone {
-    z-index: 200;
+  z-index: 200;
 }
 
 .form-group .form-input,
 .form-group .form-select,
 .form-group .form-textarea {
-    background-repeat: no-repeat;
-    background-position: 14px center;
-    background-size: 18px 18px;
+  background-repeat: no-repeat;
+  background-position: 14px center;
+  background-size: 18px 18px;
 }
 
 .form-group.form-group-service .form-select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2'%3E%3Ccircle cx='12' cy='8' r='5'/%3E%3Cpath d='M3 21v-2a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2'%3E%3Ccircle cx='12' cy='8' r='5'/%3E%3Cpath d='M3 21v-2a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2'/%3E%3C/svg%3E");
 }
 
 .form-group.form-group-name .form-input {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
 }
 
 .form-group.form-group-email .form-input {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cpolyline points='22,6 12,13 2,6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cpolyline points='22,6 12,13 2,6'/%3E%3C/svg%3E");
 }
 
 .form-group.form-group-experience .form-textarea {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Crect x='2' y='7' width='20' height='14' rx='2' ry='2'/%3E%3Cpath d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/%3E%3C/svg%3E");
-    background-position: 14px 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Crect x='2' y='7' width='20' height='14' rx='2' ry='2'/%3E%3Cpath d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/%3E%3C/svg%3E");
+  background-position: 14px 14px;
 }
 
 .form-group.form-group-phone .form-input {
-    background-image: none;
+  background-image: none;
 }
 
 .form-label {
-    display: none; /* Hide labels to match the image */
+  display: none; /* Hide labels to match the image */
 }
 
 .form-icon {
-    width: 16px;
-    height: 16px;
-    opacity: 0.6;
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
 }
 
 /* Form Inputs */
 .form-input {
-    width: 100%;
-    padding: 10px 12px 10px 40px;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--form-text);
-    background: var(--form-input-bg);
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    transition: all 0.2s ease;
-    outline: none;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-    appearance: none;
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--form-text);
+  background: var(--form-input-bg);
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  outline: none;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .form-input::placeholder {
-    color: var(--form-placeholder);
-    opacity: 1;
+  color: var(--form-placeholder);
+  opacity: 1;
 }
 
 .form-input:hover {
-    border-color: var(--form-input-focus);
+  border-color: var(--form-input-focus);
 }
 
 .form-input:focus {
-    border-color: #3b82f6;
-    box-shadow: none;
+  border-color: #3b82f6;
+  box-shadow: none;
 }
 
 .form-input.error {
-    border-color: #ef4444;
+  border-color: #ef4444;
 }
 
 .form-input.error:focus {
-    border-color: #ef4444;
-    box-shadow: none;
+  border-color: #ef4444;
+  box-shadow: none;
 }
 
 /* Custom Select */
 .custom-select-wrapper {
-    position: relative;
+  position: relative;
 }
 
 .form-select {
-    appearance: none;
-    padding-right: 40px;
-    cursor: pointer;
-    background-image: none;
-    font-weight: 400;
+  appearance: none;
+  padding-right: 40px;
+  cursor: pointer;
+  background-image: none;
+  font-weight: 400;
 }
 
 .select-arrow {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--form-text-secondary);
-    transition: transform 0.2s ease;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--form-text-secondary);
+  transition: transform 0.2s ease;
 }
 
 .custom-select-wrapper:hover .select-arrow {
-    color: var(--form-input-focus);
+  color: var(--form-input-focus);
 }
 
 .form-select:focus ~ .select-arrow {
-    transform: translateY(-50%) rotate(180deg);
+  transform: translateY(-50%) rotate(180deg);
 }
 
 /* Ensure phone input wrapper has proper stacking */
 .form-group.form-group-phone {
-    position: relative;
-    z-index: 100; /* Increased to ensure dropdown appears above all form elements */
-    overflow: visible; /* Ensure dropdown can overflow the container */
+  position: relative;
+  z-index: 100; /* Increased to ensure dropdown appears above all form elements */
+  overflow: visible; /* Ensure dropdown can overflow the container */
 }
 
 .form-group.form-group-phone .iti {
-    position: relative;
-    z-index: 100;
-    width: 100%;
-    display: block;
+  position: relative;
+  z-index: 100;
+  width: 100%;
+  display: block;
 }
 
 .form-group.form-group-phone .iti__container {
-    position: relative;
+  position: relative;
 }
 
 /* Textarea */
 .form-textarea {
-    resize: vertical;
-    min-height: 80px;
-    max-height: 200px;
-    line-height: 1.5;
-    padding-top: 12px;
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+  line-height: 1.5;
+  padding-top: 12px;
 }
 
 /* Form Hint */
 .form-hint {
-    display: none; /* Hide hints to match the clean design */
+  display: none; /* Hide hints to match the clean design */
 }
 
 /* Form Error */
 .form-error {
-    display: none;
-    font-size: 13px;
-    color: #ef4444;
-    margin-top: 6px;
-    padding-left: 0;
-    font-weight: 400;
-    line-height: 1.4;
+  display: none;
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 6px;
+  padding-left: 0;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 .form-error.visible {
-    display: block;
+  display: block;
 }
 
 /* Submit Button */
 .form-actions {
-    margin-top: 16px;
+  margin-top: 16px;
 }
 
 .btn-submit {
-    width: 100%;
-    padding: 14px 20px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #ffffff;
-    background: #2563eb;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: none;
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #2563eb;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: none;
 }
 
 .btn-submit:hover {
-    background: #1d4ed8;
-    transform: none;
+  background: #1d4ed8;
+  transform: none;
 }
 
 .btn-submit:active {
-    background: #1e40af;
+  background: #1e40af;
 }
 
 .btn-submit:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .btn-loader {
-    display: none;
+  display: none;
 }
 
 .btn-submit.loading .btn-text {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .btn-submit.loading .btn-loader {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* Form Message */
 .form-message {
-    display: none;
-    margin-top: 16px;
-    padding: 12px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
+  display: none;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
 }
 
 .form-message.visible {
-    display: block;
+  display: block;
 }
 
 .form-message.success {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--form-success);
-    border: 1px solid var(--form-success);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--form-success);
+  border: 1px solid var(--form-success);
 }
 
 .form-message.error {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--form-error);
-    border: 1px solid var(--form-error);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--form-error);
+  border: 1px solid var(--form-error);
 }
 /* International Telephone Input Styling */
 .iti {
-    width: 100%;
-    display: block;
-    position: relative;
+  width: 100%;
+  display: block;
+  position: relative;
 }
 
 .iti__input {
-    width: 100% !important;
-    padding: 12px 14px 12px 84px !important;
-    font-size: 14px !important;
-    font-family: inherit !important;
-    color: var(--form-text) !important;
-    background: var(--form-input-bg) !important;
-    border: 1px solid #e5e7eb !important;
-    border-radius: 8px !important;
-    transition: all 0.2s ease !important;
-    outline: none !important;
-    box-sizing: border-box !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
+  width: 100% !important;
+  padding: 12px 14px 12px 84px !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  color: var(--form-text) !important;
+  background: var(--form-input-bg) !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
 }
 
 .iti__input::placeholder {
-    color: var(--form-placeholder) !important;
-    opacity: 1 !important;
+  color: var(--form-placeholder) !important;
+  opacity: 1 !important;
 }
 
 .iti__input:hover {
-    border-color: var(--form-input-focus) !important;
+  border-color: var(--form-input-focus) !important;
 }
 
 .iti__input:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: none !important;
 }
 
 .iti__input.error {
-    border-color: #ef4444 !important;
+  border-color: #ef4444 !important;
 }
 
 .iti__input.error:focus {
-    border-color: #ef4444 !important;
-    box-shadow: none !important;
+  border-color: #ef4444 !important;
+  box-shadow: none !important;
 }
 
 .iti__flag-container {
-    padding: 0;
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 101; /* Ensure flag container is above input */
+  padding: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 101; /* Ensure flag container is above input */
 }
 
 .iti__selected-flag {
-    padding: 0 12px 0 16px;
-    border-right: 1px solid #e5e7eb;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: transparent;
-    z-index: 101;
-    position: relative;
+  padding: 0 12px 0 16px;
+  border-right: 1px solid #e5e7eb;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  z-index: 101;
+  position: relative;
 }
 
 .iti__flag {
-    height: 15px;
-    box-shadow: 0 0 1px rgba(0,0,0,0.2);
+  height: 15px;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
 .iti__selected-dial-code {
-    color: #374151;
-    font-size: 15px;
-    font-weight: 500;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .iti__selected-flag:hover,
 .iti__selected-flag:focus {
-    background: transparent;
+  background: transparent;
 }
 
 .iti__arrow {
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid var(--form-text-secondary);
-    margin-left: 4px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid var(--form-text-secondary);
+  margin-left: 4px;
 }
 
 .iti__country-list {
-    background: #ffffff !important; /* Solid white background for readability */
-    border: 1px solid var(--form-input-border);
-    box-shadow: 0 4px 12px var(--form-shadow);
-    border-radius: 8px;
-    margin-top: 4px;
-    max-height: 200px;
-    width: 100%;
-    min-width: 250px;
-    z-index: 99999 !important; /* Well above modal (9999) */
-    position: absolute !important;
+  background: #ffffff !important; /* Solid white background for readability */
+  border: 1px solid var(--form-input-border);
+  box-shadow: 0 4px 12px var(--form-shadow);
+  border-radius: 8px;
+  margin-top: 32px; /* Space under the input so the list doesn't touch */
+  max-height: 200px;
+  width: 100%;
+  min-width: 250px;
+  z-index: 99999 !important; /* Well above modal (9999) */
+  position: absolute !important;
 }
 
 /* When dropdown is appended to body via dropdownContainer */
 body > .iti__country-list {
-    z-index: 100002 !important; /* Well above modal (9999) */
-    background: #ffffff !important; /* Solid white background */
-    position: fixed !important;
-    margin: 0 !important;
-    width: auto !important;
-    left: auto !important;
-    top: auto !important;
-    transform: none !important;
+  z-index: 100002 !important; /* Well above modal (9999) */
+  background: #ffffff !important; /* Solid white background */
+  position: fixed !important;
+  margin: 0 !important;
+  width: auto !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
 }
 
 /* Style the search box in dropdown */
 .iti__search-container {
-    padding: 8px;
-    border-bottom: 1px solid var(--form-input-border);
-    background: #ffffff !important; /* Solid white background */
-    position: sticky;
-    top: 0;
-    z-index: 1;
+  padding: 8px;
+  border-bottom: 1px solid var(--form-input-border);
+  background: #ffffff !important; /* Solid white background */
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .iti__search-input {
-    width: 100%;
-    padding: 8px 12px 8px 36px; /* Extra left padding for search icon */
-    border: 1px solid var(--form-input-border);
-    border-radius: 6px;
-    background: #ffffff !important; /* Solid white background */
-    color: var(--form-text);
-    font-size: 14px;
-    font-family: inherit;
-    outline: none;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px 8px 36px; /* Extra left padding for search icon */
+  border: 1px solid var(--form-input-border);
+  border-radius: 6px;
+  background: #ffffff !important; /* Solid white background */
+  color: var(--form-text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .iti__search-input:focus {
-    border-color: var(--form-input-focus);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--form-input-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .iti__search-input::placeholder {
-    color: var(--form-text-secondary);
-    opacity: 0.6;
+  color: var(--form-text-secondary);
+  opacity: 0.6;
 }
 
 .iti__country {
-    padding: 10px 12px;
-    color: var(--form-text);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  padding: 10px 12px;
+  color: var(--form-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .iti__country:hover {
-    background: rgba(59, 130, 246, 0.05);
+  background: rgba(59, 130, 246, 0.05);
 }
 
 .iti__country.iti__highlight {
-    background: var(--form-input-focus);
-    color: #ffffff;
+  background: var(--form-input-focus);
+  color: #ffffff;
 }
 
 .iti__dial-code {
-    color: var(--form-text-secondary);
-    font-size: 14px;
+  color: var(--form-text-secondary);
+  font-size: 14px;
 }
 
 .iti__country.iti__highlight .iti__dial-code {
-    color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .iti__country-name {
-    color: var(--form-text);
-    font-size: 14px;
+  color: var(--form-text);
+  font-size: 14px;
 }
 
 .iti__country.iti__highlight .iti__country-name {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 /* Fullscreen popup styles for mobile */
 .iti__country-list--fullscreen {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-height: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    z-index: 99999 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  z-index: 99999 !important;
 }
 
 .iti__country-list--fullscreen .iti__search-container {
-    padding: 12px 16px;
+  padding: 12px 16px;
 }
 
 .iti__country-list--fullscreen .iti__search-input {
-    font-size: 16px;
-    padding: 12px 16px;
+  font-size: 16px;
+  padding: 12px 16px;
+}
+
+/* Ensure fullscreen container (used by plugin) has no outer padding on any screen size */
+.iti--fullscreen-popup.iti--container {
+  padding: 0 !important;
 }
 
 /* Modal Mode
@@ -550,360 +559,352 @@ body > .iti__country-list {
  * - Overflow: container has overflow-y: auto, form groups have overflow: visible
  * -------------------------------------------------------- */
 .form-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    display: none; /* Hidden by default */
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    padding: 20px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .form-modal.active {
-    display: flex; /* Show when active */
-    opacity: 1;
+  display: flex; /* Show when active */
+  opacity: 1;
 }
 
 /* Make the wrapper transparent in modal so form-container can be positioned properly */
 .form-modal .wishup-application-form {
-    display: contents;
+  display: contents;
 }
 
 .form-modal .form-container {
-    max-width: 420px;
-    width: 100%;
-    /* No internal scroll: let content be fully visible */
-    max-height: none;
-    overflow: visible;
-    position: relative;
-    transition: transform 0.3s ease;
-    margin: auto;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 0 !important;
-    box-sizing: border-box;
-    display: block; /* Explicit block display */
+  max-width: 420px;
+  width: 100%;
+  /* No internal scroll: let content be fully visible */
+  max-height: none;
+  overflow: visible;
+  position: relative;
+  transition: transform 0.3s ease;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0 !important;
+  box-sizing: border-box;
+  display: block; /* Explicit block display */
 }
 
 .form-modal.active .form-container {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 /* Ensure form header is visible in modal */
 .form-modal .form-header {
-    margin: 0;
-    padding: 20px;
+  margin: 0;
+  padding: 20px;
 }
 
 /* Ensure phone dropdown doesn't get clipped in modal */
 .form-modal .form-group.form-group-phone {
-    overflow: visible !important;
+  overflow: visible !important;
 }
 
 .form-modal .iti {
-    overflow: visible !important;
+  overflow: visible !important;
 }
 
 /* Ensure form content is visible in modal */
 .form-modal .application-form {
-    display: block;
-    padding: 20px;
-    visibility: visible;
-    opacity: 1;
-    overflow: visible; /* Allow dropdown to extend beyond */
+  display: block;
+  padding: 20px;
+  visibility: visible;
+  opacity: 1;
+  overflow: visible; /* Allow dropdown to extend beyond */
 }
 
 /* When intl-tel-input dropdown is appended to body (modal/mobile), keep it above overlays */
 body > .iti__country-list {
-    position: fixed !important;
-    z-index: 1000000 !important;
-    max-height: 60vh;
-    overflow-y: auto;
+  position: fixed !important;
+  z-index: 1000000 !important;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .form-modal .form-group {
-    display: block;
-    margin-bottom: 12px;
-    visibility: visible;
+  display: block;
+  margin-bottom: 12px;
+  visibility: visible;
 }
 
 .form-modal .form-input,
 .form-modal .form-select,
 .form-modal .form-textarea,
 .form-modal .iti__input {
-    display: block;
-    width: 100%;
-    visibility: visible;
+  display: block;
+  width: 100%;
+  visibility: visible;
 }
 
 .form-modal .btn-submit,
 .form-modal .form-actions {
-    display: block;
-    visibility: visible;
+  display: block;
+  visibility: visible;
 }
 
 .form-modal .form-close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
-    background: rgba(0, 0, 0, 0.05);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    color: var(--form-text-secondary);
-    transition: all 0.2s ease;
-    z-index: 10;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--form-text-secondary);
+  transition: all 0.2s ease;
+  z-index: 10;
 }
 
 .form-modal .form-close:hover {
-    background: rgba(0, 0, 0, 0.1);
-    color: var(--form-text);
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--form-text);
 }
 
 .form-modal .form-close svg {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 .form-header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .form-logo img {
-    display: block;
-    width: 80px;
-    height: auto;
+  display: block;
+  width: 80px;
+  height: auto;
 }
 
 .application-form {
-    padding: 20px;
-    display: block;
-    visibility: visible;
+  padding: 20px;
+  display: block;
+  visibility: visible;
 }
 
 form.application-form {
-    display: block !important;
-    visibility: visible !important;
+  display: block !important;
+  visibility: visible !important;
 }
 
 /* Sidebar Mode - Used in post.hbs */
 .form-sidebar .form-container {
-    padding: 0 !important;
-    overflow: hidden;
+  padding: 0 !important;
+  /* Ensure phone dropdown can render beyond the container without clipping */
+  overflow: visible;
 }
 
 /* Inline Mode - Default when no mode specified */
 .form-inline {
-    max-width: 420px;
-    margin: 40px auto;
+  max-width: 420px;
+  margin: 40px auto;
 }
 
 .form-inline .form-container {
-    padding: 0 !important;
+  padding: 0 !important;
 }
 
 /* Trigger Button */
 .wishup-form-trigger {
-    padding: 14px 28px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #ffffff;
-    background: #2563eb;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #2563eb;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .wishup-form-trigger:hover {
-    background: #1d4ed8;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    transform: translateY(-1px);
+  background: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
 }
 
 .wishup-form-trigger svg {
-    width: 18px;
-    height: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .form-container {
-        padding: 0 !important;
-        border-radius: 14px;
-    }
+  .form-container {
+    padding: 0 !important;
+    border-radius: 14px;
+  }
 
-    .form-title {
-        font-size: 20px;
-    }
+  .form-title {
+    font-size: 20px;
+  }
 
-    .form-subtitle {
-        font-size: 13px;
-    }
+  .form-subtitle {
+    font-size: 13px;
+  }
 
-    .form-input {
-        padding: 10px 14px 10px 40px;
-        font-size: 16px; /* Prevent zoom on iOS */
-    }
+  .form-input {
+    padding: 10px 14px 10px 40px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
 
-    .iti__input {
-        padding: 10px 14px 10px 58px !important;
-        font-size: 16px !important;
-    }
+  .iti__input {
+    padding: 10px 14px 10px 58px !important;
+    font-size: 16px !important;
+  }
 
-    .btn-submit {
-        padding: 14px 22px;
-        font-size: 16px;
-    }
+  .btn-submit {
+    padding: 14px 22px;
+    font-size: 16px;
+  }
 
-    .form-modal {
-        padding: 16px;
-    }
+  .form-modal {
+    padding: 16px;
+  }
 
-    .form-modal .form-container {
-        /* No internal scroll on mobile */
-        max-height: none;
-        padding: 0 !important;
-        display: block;
-        overflow: visible;
-    }
+  .form-modal .form-container {
+    /* No internal scroll on mobile */
+    max-height: none;
+    padding: 0 !important;
+    display: block;
+    overflow: visible;
+  }
 
-    .form-modal .form-close {
-        top: 16px;
-        right: 16px;
-    }
+  .form-modal .form-close {
+    top: 16px;
+    right: 16px;
+  }
 
-    .form-sidebar,
-    .form-inline {
-        max-width: 100%;
-    }
+  .form-sidebar,
+  .form-inline {
+    max-width: 100%;
+  }
 
-    .form-group {
-        margin-bottom: 12px;
-    }
+  .form-group {
+    margin-bottom: 12px;
+  }
 
-    .form-actions {
-        margin-top: 16px;
-    }
+  .form-actions {
+    margin-top: 16px;
+  }
 
-    /* Ensure intl-tel-input fullscreen popup has no outer padding on small screens */
-    .iti--fullscreen-popup.iti--container {
-        padding: 0 !important;
-    }
+  /* Z-index bump for search wrapper on mobile only */
+  .iti__search-input-wrapper {
+    z-index: 999999 !important;
+  }
 
-    /* Match header top corners with container radius on mobile */
-    /* Modal container keeps 16px radius due to higher specificity */
-    .form-modal .form-header {
-        border-top-left-radius: 16px;
-        border-top-right-radius: 16px;
-    }
+  /* Match header top corners with container radius on mobile */
+  /* Modal container keeps 16px radius due to higher specificity */
+  .form-modal .form-header {
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
 
-    /* Inline and sidebar containers use 14px radius on mobile */
-    .form-inline .form-header,
-    .form-sidebar .form-header {
-        border-top-left-radius: 14px;
-        border-top-right-radius: 14px;
-    }
+  /* Inline and sidebar containers use 14px radius on mobile */
+  .form-inline .form-header,
+  .form-sidebar .form-header {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+  }
 
-    /* Raise z-index of search wrapper so it stays above in-list items */
-    .iti__search-input-wrapper {
-        z-index: 999999 !important;
-    }
-
-    /* Add extra spacing below the input for the dropdown list */
-    .iti__country-list {
-        margin-top: 32px;
-    }
-    /* If list is ever appended to body, ensure spacing still applies */
-    body > .iti__country-list {
-        margin-top: 32px !important;
-    }
+  /* If list is ever appended to body, ensure spacing still applies on mobile too */
+  body > .iti__country-list {
+    margin-top: 32px !important;
+  }
 }
 
 @media (max-width: 480px) {
-    .form-title {
-        font-size: 18px;
-    }
+  .form-title {
+    font-size: 18px;
+  }
 
-    .form-input {
-        padding: 11px 14px 11px 38px;
-    }
+  .form-input {
+    padding: 11px 14px 11px 38px;
+  }
 
-    .iti__input {
-        padding: 11px 14px 11px 52px !important;
-    }
+  .iti__input {
+    padding: 11px 14px 11px 52px !important;
+  }
 
-    .form-error {
-        padding-left: 38px;
-        font-size: 11px;
-    }
+  .form-error {
+    padding-left: 38px;
+    font-size: 11px;
+  }
 
-    .iti__selected-flag {
-        padding: 0 6px 0 14px;
-    }
+  .iti__selected-flag {
+    padding: 0 6px 0 14px;
+  }
 
-    .iti__country-list {
-        width: calc(100vw - 40px);
-        max-width: 320px;
-    }
+  .iti__country-list {
+    width: calc(100vw - 40px);
+    max-width: 320px;
+  }
 
-    /* Ensure body-appended dropdown positions correctly on mobile */
-    body > .iti__country-list {
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: calc(100vw - 40px) !important;
-        max-width: 320px !important;
-    }
+  /* Ensure body-appended dropdown positions correctly on mobile */
+  body > .iti__country-list {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100vw - 40px) !important;
+    max-width: 320px !important;
+  }
 }
 
 /* Fix for iOS Safari overflow */
 @supports (-webkit-touch-callout: none) {
-    .form-modal .form-container {
-        max-height: none;
-    }
+  .form-modal .form-container {
+    max-height: none;
+  }
 }
 
 /* Smooth scrolling for modal */
 .form-modal .form-container::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .form-modal .form-container::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .form-modal .form-container::-webkit-scrollbar-thumb {
-    background: var(--form-border);
-    border-radius: 4px;
+  background: var(--form-border);
+  border-radius: 4px;
 }
 
 .form-modal .form-container::-webkit-scrollbar-thumb:hover {
-    background: var(--form-input-border);
+  background: var(--form-input-border);
 }
 
 /* Prevent horizontal overflow */
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .wishup-application-form,
@@ -911,209 +912,212 @@ form.application-form {
 .form-group,
 .form-input,
 .iti {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .wishup-application-form {
-    overflow: visible; /* Allow dropdown to be visible */
+  overflow: visible; /* Allow dropdown to be visible */
 }
 
 .form-container {
-    overflow: hidden; /* Contained overflow by default */
+  overflow: hidden; /* Contained overflow by default */
 }
 
 .form-group,
 .iti {
-    overflow: visible;
+  overflow: visible;
 }
 
 /* Ensure no layout shift on focus */
 .form-input:focus,
 .iti__input:focus {
-    outline: none;
+  outline: none;
 }
 
 /* Loading spinner animation */
 @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .btn-submit.loading .btn-loader svg {
-    animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 /* Post with Application Sidebar (2/3 content, 1/3 form) - Used in post.hbs */
 .post-content-with-application {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 48px;
-    max-width: 1366px;
-    margin: 0 auto;
-    padding: 0 32px;
-    align-items: start;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 48px;
+  max-width: 1366px;
+  margin: 0 auto;
+  padding: 0 32px;
+  align-items: start;
 }
 
 .post-content-with-application .post-main-content {
-    min-width: 0;
+  min-width: 0;
 }
 
 .post-content-with-application .post-sidebar-form {
-    position: sticky;
-    top: 100px;
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
+  position: sticky;
+  top: 100px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .post-content-with-application .post-sidebar-form .form-container {
-    padding: 0 !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e5e7eb;
-    overflow: hidden;
+  padding: 0 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  /* Allow phone dropdown to overflow without blanking the card */
+  overflow: visible;
 }
 
 /* Ensure proper content width for post content */
 .post-content-with-application .gh-content {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 @media (max-width: 1024px) {
-    .post-content-with-application {
-        grid-template-columns: 2fr 1fr;
-        gap: 32px;
-        padding: 0 24px;
-    }
-    .post-content-with-application .post-sidebar-form {
-        top: 80px;
-    }
+  .post-content-with-application {
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    padding: 0 24px;
+  }
+  .post-content-with-application .post-sidebar-form {
+    top: 80px;
+  }
 }
 
 @media (max-width: 968px) {
-    .post-content-with-application {
-        grid-template-columns: 1fr;
-        gap: 0;
-        padding: 0;
-    }
+  .post-content-with-application {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0;
+  }
 
-    .post-content-with-application .post-sidebar-form {
-        display: none;
-    }
+  .post-content-with-application .post-sidebar-form {
+    display: none;
+  }
 
-    .post-content-with-application .post-main-content {
-        padding: 0;
-    }
+  .post-content-with-application .post-main-content {
+    padding: 0;
+  }
 }
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-    .post-content-with-application {
-        grid-template-columns: 2fr 1fr;
-        gap: 32px;
-        padding: 0 24px;
-    }
-    .post-content-with-application .post-sidebar-form {
-        top: 80px;
-    }
+  .post-content-with-application {
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    padding: 0 24px;
+  }
+  .post-content-with-application .post-sidebar-form {
+    top: 80px;
+  }
 }
 
 @media (max-width: 968px) {
-    /* Hide sidebar form on tablet/mobile */
-    .post-content-with-application {
-        grid-template-columns: 1fr;
-        gap: 0;
-        padding: 0;
-    }
+  /* Hide sidebar form on tablet/mobile */
+  .post-content-with-application {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0;
+  }
 
-    .post-content-with-application .post-sidebar-form {
-        display: none;
-    }
+  .post-content-with-application .post-sidebar-form {
+    display: none;
+  }
 
-    .post-content-with-application .post-main-content {
-        padding: 0;
-    }
+  .post-content-with-application .post-main-content {
+    padding: 0;
+  }
 }
 
 /* Mobile Action Buttons - Site-wide bottom bar for mobile */
 .mobile-action-buttons {
-    display: none; /* Hidden on desktop */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    border-top: 1px solid #e5e7eb;
-    padding: 12px 16px;
-    gap: 12px;
-    z-index: 998;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  display: none; /* Hidden on desktop */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 12px 16px;
+  gap: 12px;
+  z-index: 998;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .mobile-action-btn {
-    flex: 1;
-    padding: 14px 20px;
-    font-size: 15px;
-    font-weight: 600;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  flex: 1;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mobile-action-primary {
-    background: #2563eb;
-    color: #ffffff;
+  background: #2563eb;
+  color: #ffffff;
 }
 
 .mobile-action-primary:hover {
-    background: #1d4ed8;
+  background: #1d4ed8;
 }
 
 .mobile-action-secondary {
-    background: #ffffff;
-    color: #2563eb;
-    border: 2px solid #2563eb;
+  background: #ffffff;
+  color: #2563eb;
+  border: 2px solid #2563eb;
 }
 
 .mobile-action-secondary:hover {
-    background: #eff6ff;
+  background: #eff6ff;
 }
 
 /* Show mobile action buttons on mobile screens */
 @media (max-width: 968px) {
-    .mobile-action-buttons {
-        display: flex;
-    }
+  .mobile-action-buttons {
+    display: flex;
+  }
 
-    /* Add padding to body to account for fixed bottom bar */
-    body {
-        padding-bottom: 80px;
-    }
+  /* Add padding to body to account for fixed bottom bar */
+  body {
+    padding-bottom: 80px;
+  }
 
-    /* Ensure footer doesn't get hidden behind the action bar */
-    .site-footer {
-        margin-bottom: 0;
-    }
+  /* Ensure footer doesn't get hidden behind the action bar */
+  .site-footer {
+    margin-bottom: 0;
+  }
 }
 
 @media (max-width: 480px) {
-    .mobile-action-buttons {
-        padding: 10px 12px;
-        gap: 8px;
-    }
+  .mobile-action-buttons {
+    padding: 10px 12px;
+    gap: 8px;
+  }
 
-    .mobile-action-btn {
-        padding: 12px 16px;
-        font-size: 14px;
-    }
+  .mobile-action-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
 }
 
-
-
 .wishup-application-form.animate-in {
-    animation: slideInUp 0.4s ease-out;
+  animation: slideInUp 0.4s ease-out;
 }

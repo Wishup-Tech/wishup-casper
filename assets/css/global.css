@@ -399,6 +399,22 @@ a {
     text-decoration: none;
 }
 
+/* Header title overflow handling: wrap on small screens, truncate on desktop */
+/* Allow the brand cell to shrink so long titles don't force overflow */
+
+
+/* On small screens (mobile/tablet), allow wrapping up to 2 lines instead of ellipsis */
+@media (max-width: 992px) {
+    .gh-head-logo.no-image {
+        white-space: normal;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        word-break: break-word;
+    }
+}
+
 h1,
 h2,
 h3,

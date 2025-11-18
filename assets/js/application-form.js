@@ -690,7 +690,7 @@
         },
 
         async submitToBackend(formData) {
-            const apiEndpoint = 'http://localhost:1337/api/public/lead/create';
+            const apiEndpoint = 'https://app-dev.wishup.co/api/public/lead/create';
             
             try {
                 // Get user IP

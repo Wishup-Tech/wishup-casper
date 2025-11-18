@@ -61,7 +61,7 @@ into the {body} tag of the default.hbs template --}}
 
         {{#match @custom.post_image_style "!=" "Hidden"}}
         {{#if feature_image}}
-            <figure class="article-image">
+            <figure class="article-image" style="display: none;">
                 {{!-- This is a responsive image, it loads different sizes depending on device
                 https://medium.freecodecamp.org/a-guide-to-responsive-images-with-ready-to-use-templates-c400bd65c433 --}}
                 <img
@@ -98,7 +98,7 @@ into the {body} tag of the default.hbs template --}}
 
         {{!-- Sidebar Application Form (Desktop only) --}}
         <aside class="post-sidebar-form">
-            {{> "application-form" mode="sidebar" show_header=true title="Get in Touch" subtitle="Fill out the form and we’ll get back to you within 24 hours." }}
+            {{> "application-form" mode="sidebar" show_header=true title="Get Free Consultation and $100 OFF" subtitle="** only for first-time customers" }}
         </aside>
     </div>
 
