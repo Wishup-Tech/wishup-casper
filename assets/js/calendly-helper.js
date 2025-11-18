@@ -61,17 +61,18 @@
         style.textContent = "\n" +
             ".calendly-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:10050;opacity:0;transition:opacity .2s ease}\n" +
             ".calendly-modal-overlay.active{opacity:1}\n" +
-            ".calendly-modal{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:960px;width:calc(100vw - 32px);max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;position:relative}\n" +
-            ".calendly-modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #e5e7eb}\n" +
+            ".calendly-modal{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:960px;width:calc(100vw - 32px);height:calc(100vh - 80px);max-height:900px;display:flex;flex-direction:column;overflow:hidden;position:relative}\n" +
+            ".calendly-modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #e5e7eb;flex-shrink:0}\n" +
             ".calendly-modal-title{font-size:16px;font-weight:600;color:#111827;margin:0}\n" +
             ".calendly-modal-close{border:none;background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#6b7280}\n" +
             ".calendly-modal-close:hover{background:#f3f4f6;color:#111827}\n" +
-            ".calendly-modal-body{position:relative;flex:1;min-height:420px;background:#fff}\n" +
+            ".calendly-modal-body{position:relative;flex:1;min-height:420px;background:#fff;overflow:hidden;width:100%}\n" +
             ".calendly-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}\n" +
             ".calendly-loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#fff}\n" +
             ".calendly-spinner{width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:cal-spin 1s linear infinite}\n" +
             "@keyframes cal-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}\n" +
-            "@media (max-width: 480px){.calendly-modal{width:calc(100vw - 24px);max-height:calc(100vh - 24px)}}\n";
+            "@media (max-width: 768px){.calendly-modal{width:calc(100vw - 24px);height:calc(100vh - 60px);max-height:none}}\n" +
+            "@media (max-width: 480px){.calendly-modal{width:100vw;height:100vh;max-height:none;border-radius:0}}\n";
         document.head.appendChild(style);
     }
 
