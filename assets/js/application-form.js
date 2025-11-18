@@ -600,6 +600,13 @@
                 fullPhoneNumber = rawPhoneValue || '';
             }
 
+            // Close modal if this form is in a modal (do this before opening Calendly)
+            const modal = formElement.closest('.form-modal');
+            if (modal && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
             // Open Calendly with form data (both desktop and mobile)
             const calendlyUrl = this.getCalendlyUrl();
             console.debug('[Form] Opening Calendly after submission');
@@ -629,13 +636,6 @@
                 
                 // Reset default service for all forms
                 LocationDetector.setDefaultService();
-                
-                // Close modal if this form is in a modal
-                const modal = formElement.closest('.form-modal');
-                if (modal && modal.classList.contains('active')) {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
             }, 500);
         },
 

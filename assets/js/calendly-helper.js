@@ -61,18 +61,19 @@
         style.textContent = "\n" +
             ".calendly-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:10050;opacity:0;transition:opacity .2s ease}\n" +
             ".calendly-modal-overlay.active{opacity:1}\n" +
-            ".calendly-modal{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:960px;width:calc(100vw - 32px);height:calc(100vh - 80px);max-height:900px;display:flex;flex-direction:column;overflow:hidden;position:relative}\n" +
-            ".calendly-modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #e5e7eb;flex-shrink:0}\n" +
-            ".calendly-modal-title{font-size:16px;font-weight:600;color:#111827;margin:0}\n" +
-            ".calendly-modal-close{border:none;background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#6b7280}\n" +
+            ".calendly-modal{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:1200px;width:80%;height:80vh;display:flex;flex-direction:column;overflow:hidden;position:relative}\n" +
+            ".calendly-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e5e7eb;flex-shrink:0}\n" +
+            ".calendly-modal-title{font-size:18px;font-weight:600;color:#005fbe;margin:0}\n" +
+            ".calendly-modal-close{border:none;background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#6b7280;transition:background .2s}\n" +
             ".calendly-modal-close:hover{background:#f3f4f6;color:#111827}\n" +
-            ".calendly-modal-body{position:relative;flex:1;min-height:420px;background:#fff;overflow:hidden;width:100%}\n" +
+            ".calendly-modal-body{position:relative;flex:1;min-height:500px;background:#fff;overflow:hidden;width:100%}\n" +
             ".calendly-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}\n" +
             ".calendly-loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#fff}\n" +
             ".calendly-spinner{width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:cal-spin 1s linear infinite}\n" +
             "@keyframes cal-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}\n" +
-            "@media (max-width: 768px){.calendly-modal{width:calc(100vw - 24px);height:calc(100vh - 60px);max-height:none}}\n" +
-            "@media (max-width: 480px){.calendly-modal{width:100vw;height:100vh;max-height:none;border-radius:0}}\n";
+            "@media (max-width: 968px){.calendly-modal{width:92%;height:85vh;border-radius:12px}.calendly-modal-header{padding:14px 16px}.calendly-modal-title{font-size:16px}.calendly-modal-body{min-height:450px}}\n" +
+            "@media (max-width: 768px){.calendly-modal{width:95%;height:90vh;border-radius:8px}.calendly-modal-body{min-height:400px}}\n" +
+            "@media (max-width: 480px){.calendly-modal{width:100%;height:100vh;border-radius:0}.calendly-modal-header{padding:12px 16px}.calendly-modal-title{font-size:15px}.calendly-modal-body{min-height:350px}}\n";
         document.head.appendChild(style);
     }
 
@@ -98,7 +99,7 @@
             header.className = 'calendly-modal-header';
             var title = document.createElement('h3');
             title.className = 'calendly-modal-title';
-            title.textContent = 'Schedule now';
+            title.textContent = 'Schedule Free Consultation';
             var closeBtn = document.createElement('button');
             closeBtn.className = 'calendly-modal-close';
             closeBtn.setAttribute('aria-label', 'Close scheduling');
