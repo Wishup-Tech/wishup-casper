@@ -694,9 +694,11 @@
                 const origin = window?.location?.origin || '';
 
                 // Format history to match expected structure
+                // localStorage format: { path, time, referrerSource, referrerMedium, referrerUrl }
+                // API format: { page, timestamp, referrerSource, referrerMedium, referrerUrl }
                 return parsedHistory.map(item => ({
-                    page: item.url || item.page || '',
-                    timestamp: item.timestamp || new Date().toISOString(),
+                    page: item.path ? `${origin}${item.path}` : (item.url || item.page || ''),
+                    timestamp: item.time ? new Date(item.time).toISOString() : (item.timestamp || new Date().toISOString()),
                     referrerMedium: item.referrerMedium || null,
                     referrerUrl: item.referrerUrl || null,
                     referrerSource: item.referrerSource || null
