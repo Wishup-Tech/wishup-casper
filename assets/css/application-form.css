@@ -61,7 +61,7 @@
 /* Form Header */
 .form-header {
   margin: 0;
-  padding: 20px;
+  padding: 14px 16px;
   text-align: left;
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   border-bottom: 1px solid #e5e7eb;
@@ -88,7 +88,7 @@
 
 /* Form Groups */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   position: relative;
   display: block;
   visibility: visible;
@@ -689,7 +689,7 @@ body > .iti__country-list {
 /* Ensure form content is visible in modal */
 .form-modal .application-form {
   display: block;
-  padding: 20px;
+  padding: 14px 16px;
   visibility: visible;
   opacity: 1;
   overflow: visible; /* Allow dropdown to extend beyond */
@@ -705,7 +705,7 @@ body > .iti__country-list {
 
 .form-modal .form-group {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   visibility: visible;
 }
 
@@ -767,7 +767,7 @@ body > .iti__country-list {
 }
 
 .application-form {
-  padding: 20px;
+  padding: 14px 16px;
   display: block;
   visibility: visible;
 }
@@ -875,11 +875,11 @@ form.application-form {
   }
 
   .form-group {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .form-actions {
-    margin-top: 16px;
+    margin-top: 14px;
   }
 
   /* Z-index bump for search wrapper on mobile only */
@@ -1031,7 +1031,7 @@ form.application-form {
 
 .post-content-with-application .post-sidebar-form {
   position: sticky;
-  top: 100px;
+  top: 24px;
   /* max-height: calc(100vh - 120px); */
   overflow-y: auto;
 }
@@ -1056,7 +1056,7 @@ form.application-form {
     padding: 0 24px;
   }
   .post-content-with-application .post-sidebar-form {
-    top: 80px;
+    top: 20px;
   }
 }
 
@@ -1084,7 +1084,7 @@ form.application-form {
     padding: 0 24px;
   }
   .post-content-with-application .post-sidebar-form {
-    top: 80px;
+    top: 20px;
   }
 }
 
