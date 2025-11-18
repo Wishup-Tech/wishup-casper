@@ -9,7 +9,7 @@ The default theme for [Ghost](http://github.com/tryghost/ghost/). This is the la
 &nbsp;
 
 ![screenshot-desktop](https://user-images.githubusercontent.com/1418797/183329195-8e8f2ee5-a473-4694-a813-a2575491209e.png)
-
+ 
 &nbsp;
 
 # First time using a Ghost theme?
