@@ -335,6 +335,54 @@
 
                 // No extra positioning required when not appending to body
 
+                // Desktop fullscreen enhancement: when opening dropdown on large screens,
+                // convert inline dropdown to fullscreen style without inline top/left.
+                // Leave mobile (< 969px) behavior untouched.
+                const DESKTOP_BREAKPOINT = 969;
+                const enableDesktopFullscreen = () => {
+                    if (window.innerWidth < DESKTOP_BREAKPOINT) return; // only desktop
+                    const itiRoot = input.closest('.iti');
+                    if (!itiRoot) return;
+                    const list = itiRoot.querySelector('.iti__country-list');
+                    if (!list) return;
+                    // Add fullscreen classes
+                    itiRoot.classList.add('iti--fullscreen-popup');
+                    list.classList.add('iti__country-list--fullscreen');
+                    // Remove inline positioning the library may have applied
+                    list.style.top = '';
+                    list.style.left = '';
+                    list.style.right = '';
+                    list.style.bottom = '';
+                    // Prevent body scroll while list is open
+                    document.body.style.overflow = 'hidden';
+                };
+                const disableDesktopFullscreen = () => {
+                    if (window.innerWidth < DESKTOP_BREAKPOINT) return; // only desktop cleanup
+                    const itiRoot = input.closest('.iti');
+                    if (!itiRoot) return;
+                    const list = itiRoot.querySelector('.iti__country-list');
+                    if (list) {
+                        list.classList.remove('iti__country-list--fullscreen');
+                        // Inline styles already cleared; not re-adding.
+                    }
+                    itiRoot.classList.remove('iti--fullscreen-popup');
+                    document.body.style.overflow = '';
+                };
+                // Attach intl-tel-input custom events
+                input.addEventListener('open:countrydropdown', enableDesktopFullscreen);
+                input.addEventListener('close:countrydropdown', disableDesktopFullscreen);
+                // Also defensive: on resize while open, re-evaluate
+                window.addEventListener('resize', () => {
+                    const itiRoot = input.closest('.iti');
+                    const list = itiRoot?.querySelector('.iti__country-list');
+                    if (!list) return;
+                    const isFullscreen = list.classList.contains('iti__country-list--fullscreen');
+                    if (window.innerWidth < DESKTOP_BREAKPOINT && isFullscreen) {
+                        // Drop back to inline if shrinking to mobile width
+                        disableDesktopFullscreen();
+                    }
+                });
+
                 // Store instance
                 window.phoneInputInstances.push(phoneInputInstance);
 
