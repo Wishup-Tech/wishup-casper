@@ -636,37 +636,66 @@
                 fullPhoneNumber = rawPhoneValue || '';
             }
 
-            // Close modal if this form is in a modal (do this before opening Calendly)
-            const modal = formElement.closest('.form-modal');
-            if (modal && modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            // Determine if Calendly should be opened
-            // Only show Calendly for hire-va or hire-bookkeeper services
-            // AND only if user's actual LOCATION (from Cloudflare/IP detection) is in eligible countries
-            // Note: We use LocationDetector.userCountry (IP-based), NOT phone selection
-            const shouldShowCalendly = this.shouldShowCalendly(formData.service, LocationDetector.userCountry);
+            // Close modal after a short delay (allow success message to be seen)
+            // Only close if form is inside a modal (not sidebar or inline forms)
+            const formWrapper = formElement.closest('.wishup-application-form');
+            const formMode = formWrapper ? formWrapper.getAttribute('data-form-mode') : null;
+            const modal = formWrapper ? formWrapper.parentElement : null;
             
-            if (shouldShowCalendly) {
-                // Open Calendly with form data (both desktop and mobile)
-                const calendlyUrl = this.getCalendlyUrl();
-                console.debug('[Form] Opening Calendly after submission');
-                console.debug('[Form] Service:', formData.service);
-                console.debug('[Form] User Location (Cloudflare):', LocationDetector.userCountry);
-                console.debug('[Form] Phone for Calendly (no +):', fullPhoneNumber);
-                
-                if (typeof window.openCalendly === 'function') {
-                    window.openCalendly(calendlyUrl, {
-                        name: formData.name,
-                        email: formData.email,
-                        phone: fullPhoneNumber // Pass phone without + sign
-                    });
+            // Only close if this is a modal form (not sidebar or inline)
+            const isModalForm = formMode === 'modal' && modal && modal.classList.contains('form-modal');
+            
+            console.debug('[Form] Form mode:', formMode);
+            console.debug('[Form] Is modal form:', isModalForm);
+            console.debug('[Form] Modal element:', modal);
+            
+            setTimeout(() => {
+                if (isModalForm && modal) {
+                    console.debug('[Form] Closing modal now - Element ID:', modal.id);
+                    
+                    // Remove active class to trigger CSS transition
+                    modal.classList.remove('active');
+                    console.debug('[Form] Removed active class from modal');
+                    
+                    // Set opacity to 0 for fade out
+                    modal.style.opacity = '0';
+                    
+                    // After CSS transition, set display none
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        console.debug('[Form] Modal display set to none');
+                    }, 300);
+                    
+                    document.body.style.overflow = '';
+                } else {
+                    console.debug('[Form] Not a modal form - skipping modal close');
                 }
-            } else {
-                console.debug('[Form] Calendly not shown - Service:', formData.service, 'User Location:', LocationDetector.userCountry);
-            }
+
+                // Determine if Calendly should be opened (after modal closes)
+                // Only show Calendly for hire-va or hire-bookkeeper services
+                // AND only if user's actual LOCATION (from Cloudflare/IP detection) is in eligible countries
+                // Note: We use LocationDetector.userCountry (IP-based), NOT phone selection
+                const shouldShowCalendly = this.shouldShowCalendly(formData.service, LocationDetector.userCountry);
+                
+                if (shouldShowCalendly) {
+                    // Open Calendly with form data (both desktop and mobile)
+                    const calendlyUrl = this.getCalendlyUrl();
+                    console.debug('[Form] Opening Calendly after submission');
+                    console.debug('[Form] Service:', formData.service);
+                    console.debug('[Form] User Location (Cloudflare):', LocationDetector.userCountry);
+                    console.debug('[Form] Phone for Calendly (no +):', fullPhoneNumber);
+                    
+                    if (typeof window.openCalendly === 'function') {
+                        window.openCalendly(calendlyUrl, {
+                            name: formData.name,
+                            email: formData.email,
+                            phone: fullPhoneNumber // Pass phone without + sign
+                        });
+                    }
+                } else {
+                    console.debug('[Form] Calendly not shown - Service:', formData.service, 'User Location:', LocationDetector.userCountry);
+                }
+            }, 800); // 800ms delay to show success message
 
             // Reset form and hide loading after short delay
             setTimeout(() => {

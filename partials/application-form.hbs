@@ -53,6 +53,10 @@ Usage: {{> "application-form" mode="sidebar" calendly_url="https://calendly.com/
                     <span>I'm interested in</span>
                 </label>
                 <div class="custom-select-wrapper">
+                    <svg class="input-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="8" r="5" stroke="#3b82f6" stroke-width="2"/>
+                        <path d="M3 21v-2a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2" stroke="#3b82f6" stroke-width="2"/>
+                    </svg>
                     <select id="form-service" name="service" class="form-input form-select" required>
                         <option value="" disabled selected>Select an option</option>
                         <option value="hire-va">Hire a Virtual Assistant</option>
@@ -73,16 +77,22 @@ Usage: {{> "application-form" mode="sidebar" calendly_url="https://calendly.com/
                     </svg>
                     <span>Your name</span>
                 </label>
-                <input 
-                    type="text" 
-                    id="form-name" 
-                    name="name" 
-                    class="form-input" 
-                    placeholder="Enter your name"
-                    required
-                    minlength="2"
-                    maxlength="100"
-                >
+                <div class="input-wrapper">
+                    <svg class="input-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#6b7280" stroke-width="2"/>
+                        <circle cx="12" cy="7" r="4" stroke="#6b7280" stroke-width="2"/>
+                    </svg>
+                    <input 
+                        type="text" 
+                        id="form-name" 
+                        name="name" 
+                        class="form-input" 
+                        placeholder="Enter your name"
+                        required
+                        minlength="2"
+                        maxlength="100"
+                    >
+                </div>
                 <span class="form-error" id="name-error"></span>
             </div>
 
@@ -93,14 +103,20 @@ Usage: {{> "application-form" mode="sidebar" calendly_url="https://calendly.com/
                     </svg>
                     <span>Work email</span>
                 </label>
-                <input 
-                    type="email" 
-                    id="form-email" 
-                    name="email" 
-                    class="form-input" 
-                    placeholder="your@email.com"
-                    required
-                >
+                <div class="input-wrapper">
+                    <svg class="input-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#6b7280" stroke-width="2"/>
+                        <polyline points="22,6 12,13 2,6" stroke="#6b7280" stroke-width="2"/>
+                    </svg>
+                    <input 
+                        type="email" 
+                        id="form-email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="your@email.com"
+                        required
+                    >
+                </div>
                 <span class="form-error" id="email-error"></span>
             </div>
 
@@ -129,14 +145,20 @@ Usage: {{> "application-form" mode="sidebar" calendly_url="https://calendly.com/
                     </svg>
                     <span>Tell us about your previous work experience</span>
                 </label>
-                <textarea 
-                    id="form-experience" 
-                    name="experience" 
-                    class="form-input form-textarea" 
-                    placeholder="Share your background, skills, and what you're looking for..."
-                    rows="4"
-                    maxlength="1000"
-                ></textarea>
+                <div class="input-wrapper textarea-wrapper">
+                    <svg class="input-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" stroke="#6b7280" stroke-width="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke="#6b7280" stroke-width="2"/>
+                    </svg>
+                    <textarea 
+                        id="form-experience" 
+                        name="experience" 
+                        class="form-input form-textarea" 
+                        placeholder="Share your background, skills, and what you're looking for..."
+                        rows="4"
+                        maxlength="1000"
+                    ></textarea>
+                </div>
                 <span class="form-error" id="experience-error"></span>
             </div>
 
