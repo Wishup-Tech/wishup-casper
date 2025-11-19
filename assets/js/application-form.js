@@ -14,8 +14,6 @@
         defaultServiceIndia: 'looking-job',
         defaultServiceOthers: 'hire-va',
         emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        // Countries eligible for Calendly consultation (only for hire-va and hire-bookkeeper)
-        calendlyEligibleCountries: ['us', 'ca', 'gb', 'uk', 'au', 'qa', 'sa', 'il', 'ae', 'nl', 'ie', 'nz', 'sg'],
     };
 
     // Global reference to intl-tel-input instance
@@ -108,51 +106,20 @@
         },
 
         setDefaultService() {
-            // Set default service for ALL forms on the page
-            const serviceSelects = utils.getElements('#form-service');
-            serviceSelects.forEach(serviceSelect => {
-                if (serviceSelect && (!serviceSelect.value || serviceSelect.value === '')) {
-                    const defaultValue = this.isIndia ? CONFIG.defaultServiceIndia : CONFIG.defaultServiceOthers;
-                    serviceSelect.value = defaultValue;
-                    
-                    // Update button text for this form
-                    const form = serviceSelect.closest('form');
-                    if (form) {
-                        const submitBtn = form.querySelector('#submit-btn .btn-text');
-                        if (submitBtn) {
-                            let text = 'Submit';
-                            if (defaultValue === 'looking-job') {
-                                text = 'Apply Now';
-                            } else if (defaultValue === 'hire-va' || defaultValue === 'hire-bookkeeper') {
-                                text = 'Get Free Consultation';
-                            }
-                            submitBtn.textContent = text;
-                        }
-                    }
-                }
-            });
+            const serviceSelect = utils.getElement('#form-service');
+            if (serviceSelect && (!serviceSelect.value || serviceSelect.value === '')) {
+                const defaultValue = this.isIndia ? CONFIG.defaultServiceIndia : CONFIG.defaultServiceOthers;
+                serviceSelect.value = defaultValue;
+                FormHandler.updateButtonText(defaultValue);
+            }
         },
 
         setPhoneCountry() {
-            // Set the country for ALL phone input instances based on detected location
-            if (this.userCountry) {
+            // Set the country for intl-tel-input based on detected location
+            if (phoneInput && this.userCountry) {
                 const countryCode = this.userCountry.toLowerCase();
-                
-                // Set country for the main phoneInput instance
-                if (phoneInput) {
-                    phoneInput.setCountry(countryCode);
-                    console.debug('[Location] Set main phone country to:', countryCode);
-                }
-                
-                // Set country for all other instances
-                if (window.phoneInputInstances && window.phoneInputInstances.length > 0) {
-                    window.phoneInputInstances.forEach((instance, index) => {
-                        if (instance) {
-                            instance.setCountry(countryCode);
-                            console.debug(`[Location] Set phone instance ${index + 1} country to:`, countryCode);
-                        }
-                    });
-                }
+                phoneInput.setCountry(countryCode);
+                console.debug('[Location] Set phone country to:', countryCode);
             }
         }
     };
@@ -178,49 +145,18 @@
 
         validatePhone(value) {
             if (!phoneInput) {
-                console.log('[Validation] Phone input not initialized');
                 return 'Phone input not initialized';
             }
 
-            // Get the raw input value (what user typed)
-            const rawValue = value || '';
-            
-            console.log('[Validation] Raw phone value:', rawValue);
-            console.log('[Validation] Raw phone value length:', rawValue.length);
-            
-            // Check if empty first
-            if (rawValue === '' || rawValue.trim() === '') {
-                console.log('[Validation] Phone is empty');
+            if (!value || value.trim() === '') {
                 return 'Please enter your phone number';
             }
 
-            // Get the full number with country code from intl-tel-input
-            const fullNumber = phoneInput.getNumber();
-            console.log('[Validation] Full number from library:', fullNumber);
-            
-            // Get just the national number (without country code)
-            const nationalNumber = rawValue.replace(/[\s\-\(\)]/g, '');
-            console.log('[Validation] National number (cleaned):', nationalNumber);
-            console.log('[Validation] National number length:', nationalNumber.length);
-            
-            // Validate: only digits allowed in the input
-            if (!/^\d+$/.test(nationalNumber)) {
-                console.log('[Validation] Failed - contains non-digits');
-                return 'Phone number can only contain digits';
-            }
-            
-            // Check length of the actual phone number (excluding country code)
-            if (nationalNumber.length > 15) {
-                console.log('[Validation] Failed - too long:', nationalNumber.length);
-                return 'Phone number cannot exceed 15 digits';
-            }
-            
-            if (nationalNumber.length < 7) {
-                console.log('[Validation] Failed - too short:', nationalNumber.length);
-                return 'Phone number must be at least 7 digits';
+            // Use intl-tel-input's built-in validation
+            if (!phoneInput.isValidNumber()) {
+                return 'Please enter a valid phone number for the selected country';
             }
 
-            console.log('[Validation] Passed - phone is valid');
             return null;
         },
 
@@ -231,7 +167,7 @@
             return null;
         },
 
-        validateForm(formData, formElement) {
+        validateForm(formData) {
             const errors = {};
             
             const serviceError = this.validateService(formData.service);
@@ -243,25 +179,18 @@
             const emailError = this.validateEmail(formData.email);
             if (emailError) errors.email = emailError;
             
-            // Get the raw phone input value for validation from THIS form
-            const phoneInputElement = formElement ? formElement.querySelector('#form-phone') : document.querySelector('#form-phone');
-            const rawPhoneValue = phoneInputElement ? phoneInputElement.value : '';
-            const phoneError = this.validatePhone(rawPhoneValue);
+            const phoneError = this.validatePhone(formData.phone);
             if (phoneError) errors.phone = phoneError;
             
             return errors;
         }
     };
 
-    const MOBILE_SIDEFORM_BREAKPOINT = 968;
-
     // Form handler
     const FormHandler = {
         init() {
             const form = utils.getElement('#wishup-form');
             if (!form) return;
-
-            this.removeUnusedForms();
 
             // Initialize intl-tel-input
             this.initPhoneInput();
@@ -273,27 +202,10 @@
             LocationDetector.init();
         },
 
-        removeUnusedForms() {
-            const isMobile = window.innerWidth <= MOBILE_SIDEFORM_BREAKPOINT;
-            if (!isMobile) {
-                return;
-            }
-
-            const forms = Array.from(utils.getElements('#wishup-form'));
-            forms.forEach(form => {
-                const wrapper = form.closest('.wishup-application-form');
-                const mode = wrapper?.dataset?.formMode || 'inline';
-                if (mode === 'sidebar') {
-                    wrapper?.remove();
-                }
-            });
-        },
-
         initPhoneInput() {
-            // Find all phone inputs on the page
-            const inputs = document.querySelectorAll("#form-phone");
-            if (!inputs || inputs.length === 0) {
-                console.warn('[Form] No phone inputs found');
+            const input = document.querySelector("#form-phone");
+            if (!input) {
+                console.warn('[Form] Phone input not found');
                 return;
             }
 
@@ -303,108 +215,36 @@
                 return;
             }
 
-            // Store all instances for later use
-            window.phoneInputInstances = window.phoneInputInstances || [];
-
-            // Initialize phone input on each form
-            inputs.forEach((input, index) => {
-                // Skip if already initialized
-                if (input.classList.contains('iti__input')) {
-                    console.debug('[Form] Phone input already initialized, skipping');
-                    return;
-                }
-
-                // Desktop: append to body for proper positioning
-                // Mobile: keep in parent to work with modal overlay
-                const isInModal = !!input.closest('.form-modal');
-                const isDesktop = window.innerWidth >= 969;
-                
-                const options = {
-                    initialCountry: 'in', // Will be updated by LocationDetector
-                    preferredCountries: ['in', 'us', 'gb', 'au'],
-                    separateDialCode: true,
-                    utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.1/build/js/utils.js',
-                    autoPlaceholder: 'aggressive',
-                    formatOnDisplay: false, // Disable auto-formatting to allow only digits
-                    nationalMode: false,
-                    countrySearch: true, // Enable search box in dropdown
-                    showFlags: true,
-                    showSelectedDialCode: true,
-                    fullScreenOnMobile: false,
-                };
-
-                // On desktop, don't use dropdownContainer so it appends to body (no overflow)
-                // On mobile, keep it in parent for modal compatibility
-                if (!isDesktop || isInModal) {
-                    options.dropdownContainer = input.parentNode;
-                }
-
-                const phoneInputInstance = window.intlTelInput(input, options);
-
-                // Store instance
-                window.phoneInputInstances.push(phoneInputInstance);
-
-                // Store the first instance as the main phoneInput for validation
-                if (index === 0 || !phoneInput) {
-                    phoneInput = phoneInputInstance;
-                }
-
-                // Restrict phone input to numbers only
-                input.addEventListener('input', (e) => {
-                    // Remove any non-digit characters (spaces, dashes, parentheses, etc.)
-                    const cleaned = e.target.value.replace(/[^\d]/g, '');
-                    e.target.value = cleaned;
-                    console.log('[Phone Input] Cleaned value:', cleaned);
-                });
-
-                // Prevent non-numeric keypress (except special keys)
-                input.addEventListener('keypress', (e) => {
-                    // Allow only digits (0-9) and special keys
-                    if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
-                        e.preventDefault();
-                    }
-                });
-
-                console.debug(`[Form] Phone input ${index + 1} initialized`);
+            phoneInput = window.intlTelInput(input, {
+                initialCountry: 'in', // Will be updated by LocationDetector
+                preferredCountries: ['in', 'us', 'gb', 'au'],
+                separateDialCode: true,
+                utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.1/build/js/utils.js',
+                autoPlaceholder: 'aggressive',
+                formatOnDisplay: true,
+                nationalMode: false,
+                countrySearch: false, // Disable search box in dropdown
+                showFlags: true,
+                showSelectedDialCode: true
             });
 
             console.debug('[Form] Phone input initialized');
         },
 
         setupEventListeners() {
-            // Get all forms on the page (modal, sidebar, inline)
-            const forms = utils.getElements('#wishup-form');
+            const form = utils.getElement('#wishup-form');
             
-            forms.forEach(form => {
-                // Form submission - pass the form element to handleSubmit
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handleSubmit(e.target);
-                });
-
-                // Service selection change - update button text for this specific form
-                const serviceSelect = form.querySelector('#form-service');
-                const submitBtn = form.querySelector('#submit-btn .btn-text');
-                
-                if (serviceSelect && submitBtn) {
-                    serviceSelect.addEventListener('change', (e) => {
-                        const service = e.target.value;
-                        let text = 'Submit';
-                        if (service === 'looking-job') {
-                            text = 'Apply Now';
-                        } else if (service === 'hire-va' || service === 'hire-bookkeeper') {
-                            text = 'Get Free Consultation';
-                        }
-                        submitBtn.textContent = text;
-                    });
-                }
+            // Form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleSubmit();
             });
 
-            // Real-time validation on blur - for all inputs across all forms
+            // Real-time validation on blur
             const inputs = ['form-name', 'form-email', 'form-phone', 'form-service'];
             inputs.forEach(id => {
-                const inputElements = utils.getElements(`#${id}`);
-                inputElements.forEach(input => {
+                const input = utils.getElement(`#${id}`);
+                if (input) {
                     input.addEventListener('blur', () => {
                         this.validateField(id);
                     });
@@ -412,25 +252,25 @@
                     input.addEventListener('input', () => {
                         utils.clearError(id.replace('form-', ''));
                     });
-                });
+                }
             });
+
+            // Service selection change - update button text
+            const serviceSelect = utils.getElement('#form-service');
+            if (serviceSelect) {
+                serviceSelect.addEventListener('change', (e) => {
+                    this.updateButtonText(e.target.value);
+                });
+            }
         },
 
         validateField(fieldId) {
             const input = utils.getElement(`#${fieldId}`);
             if (!input) return;
 
+            const value = input.value.trim();
             const field = fieldId.replace('form-', '');
-            let value, error = null;
-
-            // For phone field, get the actual input value without trimming
-            // because intl-tel-input manages the input
-            if (field === 'phone') {
-                value = input.value; // Don't trim phone - may have formatting
-                console.log('[validateField] Phone input value:', value);
-            } else {
-                value = input.value.trim();
-            }
+            let error = null;
 
             switch(field) {
                 case 'name':
@@ -471,149 +311,55 @@
             }
         },
 
-        async handleSubmit(formElement) {
+        async handleSubmit() {
             // Clear previous messages
-            const messageEl = formElement.querySelector('#form-message');
+            const messageEl = utils.getElement('#form-message');
             if (messageEl) messageEl.classList.remove('visible');
 
-            // Get the raw phone input value from THIS form
-            const phoneInputElement = formElement.querySelector('#form-phone');
-            const rawPhoneValue = phoneInputElement ? phoneInputElement.value.trim() : '';
-            
-            console.log('[handleSubmit] Raw phone input value:', rawPhoneValue);
-            console.log('[handleSubmit] Form element:', formElement);
-            
-            const nameValue = formElement.querySelector('#form-name').value.trim();
-            const nameParts = nameValue.split(' ');
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts.slice(1).join(' ') || '';
+            // Get full phone number with country code from intl-tel-input
+            const fullPhoneNumber = phoneInput ? phoneInput.getNumber() : '';
 
-            // Get phoneInput instance for this SPECIFIC form
-            // CRITICAL: We must get the country from the phone input at submission time,
-            // not at initialization, because the user may have changed the country dropdown
-            let phoneInputInstance = null;
-            if (phoneInputElement && window.phoneInputInstances && window.phoneInputInstances.length > 0) {
-                // Find the instance that matches THIS form's phone input
-                phoneInputInstance = window.phoneInputInstances.find(instance => 
-                    instance && instance.telInput === phoneInputElement
-                );
-            }
-            
-            // Fallback to global phoneInput if we only have one instance
-            if (!phoneInputInstance && phoneInput) {
-                phoneInputInstance = phoneInput;
-            }
-
-            console.log('[handleSubmit] Phone instance found:', !!phoneInputInstance);
-            console.log('[handleSubmit] Phone input element:', phoneInputElement);
-            console.log('[handleSubmit] Total phone instances:', window.phoneInputInstances?.length || 0);
-            
-            // Get country data from phone input at submission time (captures user's selection)
-            let phoneCountryData = { dialCode: '', iso2: '' };
-            if (phoneInputInstance) {
-                try {
-                    phoneCountryData = phoneInputInstance.getSelectedCountryData();
-                    console.log('[handleSubmit] Phone country data from instance:', phoneCountryData);
-                } catch (e) {
-                    console.error('[handleSubmit] Failed to get country data:', e);
-                }
-            } else {
-                console.warn('[handleSubmit] No phone instance found - will use IP-detected country');
-            }
-
-            // Get form data from THIS form
+            // Get form data
             const formData = {
-                service: formElement.querySelector('#form-service').value,
-                name: nameValue,
-                firstName: firstName,
-                lastName: lastName,
-                email: formElement.querySelector('#form-email').value.trim(),
-                phone: rawPhoneValue, // Raw phone digits (e.g., 1234567890)
-                phoneCountryCode: phoneCountryData.dialCode || '',
-                phoneCountry: phoneCountryData.iso2 || '', // This captures the CURRENT selection at submit time
-                experience: formElement.querySelector('#form-experience').value.trim(),
+                service: utils.getElement('#form-service').value,
+                name: utils.getElement('#form-name').value.trim(),
+                email: utils.getElement('#form-email').value.trim(),
+                phone: fullPhoneNumber, // Full international format (e.g., +911234567890)
+                phoneCountryCode: phoneInput ? phoneInput.getSelectedCountryData().dialCode : '',
+                phoneCountry: phoneInput ? phoneInput.getSelectedCountryData().iso2 : '',
+                experience: utils.getElement('#form-experience').value.trim(),
                 country: LocationDetector.userCountry,
                 isIndia: LocationDetector.isIndia,
                 submittedAt: new Date().toISOString()
             };
 
-            console.log('[handleSubmit] ===== FORM DATA DEBUG =====');
-            console.log('[handleSubmit] Full formData:', formData);
-            console.log('[handleSubmit] formData.phoneCountry (from dropdown):', formData.phoneCountry);
-            console.log('[handleSubmit] formData.country (from LocationDetector):', formData.country);
-            console.log('[handleSubmit] LocationDetector.userCountry:', LocationDetector.userCountry);
-            console.log('[handleSubmit] phoneCountryData:', phoneCountryData);
-            console.log('[handleSubmit] ===============================');
-
-            // Validate - pass formElement to get correct phone input
-            const errors = Validator.validateForm(formData, formElement);
+            // Validate
+            const errors = Validator.validateForm(formData);
             
             if (Object.keys(errors).length > 0) {
-                // Show all errors in THIS form
+                // Show all errors
                 Object.keys(errors).forEach(field => {
-                    const input = formElement.querySelector(`#form-${field}`);
-                    const error = formElement.querySelector(`#form-${field}-error`);
-                    
-                    if (input) input.classList.add('error');
-                    if (error) {
-                        error.textContent = errors[field];
-                        error.classList.add('visible');
-                    }
+                    utils.showError(field, errors[field]);
                 });
                 
-                // Focus first error field in THIS form
+                // Focus first error field
                 const firstErrorField = Object.keys(errors)[0];
-                const firstInput = formElement.querySelector(`#form-${firstErrorField}`);
-                if (firstInput) firstInput.focus();
+                utils.getElement(`#form-${firstErrorField}`).focus();
                 return;
             }
 
-            // Clear all errors in THIS form
+            // Clear all errors
             ['service', 'name', 'email', 'phone'].forEach(field => {
-                const input = formElement.querySelector(`#form-${field}`);
-                const error = formElement.querySelector(`#form-${field}-error`);
-                
-                if (input) input.classList.remove('error');
-                if (error) {
-                    error.textContent = '';
-                    error.classList.remove('visible');
-                }
+                utils.clearError(field);
             });
 
             // Show loading state
-            const submitBtn = formElement.querySelector('#submit-btn');
-            if (submitBtn) {
-                submitBtn.classList.add('loading');
-                submitBtn.disabled = true;
-            }
+            utils.setLoading(true);
 
-            // Submit to backend
-            try {
-                await this.submitToBackend(formData);
-                
-                // Show success message
-                const messageEl = formElement.querySelector('#form-message');
-                if (messageEl) {
-                    messageEl.textContent = 'Thanks for your interest!';
-                    messageEl.className = 'form-message visible success';
-                }
-            } catch (error) {
+            // Submit to backend (don't wait for response)
+            this.submitToBackend(formData).catch(error => {
                 console.error('Form submission error:', error);
-                
-                // Show error message
-                const messageEl = formElement.querySelector('#form-message');
-                if (messageEl) {
-                    messageEl.textContent = 'An error occurred. Please try again.';
-                    messageEl.className = 'form-message visible error';
-                }
-                
-                // Hide loading
-                if (submitBtn) {
-                    submitBtn.classList.remove('loading');
-                    submitBtn.disabled = false;
-                }
-                return;
-            }
+            });
 
             // Track submission (if analytics is available)
             if (window.gtag) {
@@ -623,96 +369,42 @@
                 });
             }
 
-            // Construct phone number for Calendly (country code + phone, no + sign)
-            // Example: +911234567890 becomes 911234567890
-            let fullPhoneNumber = '';
-            if (phoneInputInstance && phoneInputInstance.getNumber()) {
-                // Remove the + sign from the international number
-                fullPhoneNumber = phoneInputInstance.getNumber().replace(/\+/g, '');
-            } else if (formData.phoneCountryCode && rawPhoneValue) {
-                // Construct manually: country code + raw phone value (no + sign)
-                fullPhoneNumber = `${formData.phoneCountryCode}${rawPhoneValue}`;
+            // Open Calendly immediately with form data on desktop only.
+            // On mobile we show the form modal / thank-you flow but do NOT open Calendly directly.
+            const calendlyUrl = this.getCalendlyUrl();
+            const isMobileView = (typeof window !== 'undefined') && window.innerWidth <= 968;
+
+            if (!isMobileView) {
+                console.debug('[Form] Opening Calendly after submission (desktop view)');
+                if (typeof window.openCalendly === 'function') {
+                    window.openCalendly(calendlyUrl, {
+                        name: formData.name,
+                        email: formData.email,
+                        phone: fullPhoneNumber // Pass full international number
+                    });
+                }
             } else {
-                fullPhoneNumber = rawPhoneValue || '';
+                console.debug('[Form] Mobile view detected - skipping Calendly open');
             }
-
-            // Close modal after a short delay (allow success message to be seen)
-            // Only close if form is inside a modal (not sidebar or inline forms)
-            const formWrapper = formElement.closest('.wishup-application-form');
-            const formMode = formWrapper ? formWrapper.getAttribute('data-form-mode') : null;
-            const modal = formWrapper ? formWrapper.parentElement : null;
-            
-            // Only close if this is a modal form (not sidebar or inline)
-            const isModalForm = formMode === 'modal' && modal && modal.classList.contains('form-modal');
-            
-            console.debug('[Form] Form mode:', formMode);
-            console.debug('[Form] Is modal form:', isModalForm);
-            console.debug('[Form] Modal element:', modal);
-            
-            setTimeout(() => {
-                if (isModalForm && modal) {
-                    console.debug('[Form] Closing modal now - Element ID:', modal.id);
-                    
-                    // Remove active class to trigger CSS transition
-                    modal.classList.remove('active');
-                    console.debug('[Form] Removed active class from modal');
-                    
-                    // Set opacity to 0 for fade out
-                    modal.style.opacity = '0';
-                    
-                    // After CSS transition, set display none
-                    setTimeout(() => {
-                        modal.style.display = 'none';
-                        console.debug('[Form] Modal display set to none');
-                    }, 300);
-                    
-                    document.body.style.overflow = '';
-                } else {
-                    console.debug('[Form] Not a modal form - skipping modal close');
-                }
-
-                // Determine if Calendly should be opened (after modal closes)
-                // Only show Calendly for hire-va or hire-bookkeeper services
-                // AND only if user's actual LOCATION (from Cloudflare/IP detection) is in eligible countries
-                // Note: We use LocationDetector.userCountry (IP-based), NOT phone selection
-                const shouldShowCalendly = this.shouldShowCalendly(formData.service, LocationDetector.userCountry);
-                
-                if (shouldShowCalendly) {
-                    // Open Calendly with form data (both desktop and mobile)
-                    const calendlyUrl = this.getCalendlyUrl();
-                    console.debug('[Form] Opening Calendly after submission');
-                    console.debug('[Form] Service:', formData.service);
-                    console.debug('[Form] User Location (Cloudflare):', LocationDetector.userCountry);
-                    console.debug('[Form] Phone for Calendly (no +):', fullPhoneNumber);
-                    
-                    if (typeof window.openCalendly === 'function') {
-                        window.openCalendly(calendlyUrl, {
-                            name: formData.name,
-                            email: formData.email,
-                            phone: fullPhoneNumber // Pass phone without + sign
-                        });
-                    }
-                } else {
-                    console.debug('[Form] Calendly not shown - Service:', formData.service, 'User Location:', LocationDetector.userCountry);
-                }
-            }, 800); // 800ms delay to show success message
 
             // Reset form and hide loading after short delay
             setTimeout(() => {
-                // Hide loading
-                if (submitBtn) {
-                    submitBtn.classList.remove('loading');
-                    submitBtn.disabled = false;
-                }
-                formElement.reset();
+                utils.setLoading(false);
+                utils.getElement('#wishup-form').reset();
                 
-                // Reset phone input for this form
-                if (phoneInputInstance) {
-                    phoneInputInstance.setNumber('');
+                // Reset phone input
+                if (phoneInput) {
+                    phoneInput.setNumber('');
                 }
                 
-                // Reset default service for all forms
                 LocationDetector.setDefaultService();
+                
+                // Close modal if open
+                const modal = utils.getElement('.form-modal');
+                if (modal && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
             }, 500);
         },
 
@@ -728,186 +420,25 @@
                 || 'https://calendly.com/neelesh-rangwani-wishup/30min';
         },
 
-        shouldShowCalendly(service, userLocation) {
-            // Don't show Calendly for job applications
-            if (service === 'looking-job') {
-                return false;
-            }
-
-            // Only show Calendly for hire-va and hire-bookkeeper
-            if (service !== 'hire-va' && service !== 'hire-bookkeeper') {
-                return false;
-            }
-
-            // Check if user's actual location (from Cloudflare/IP) is in eligible list
-            // Note: This is based on geolocation, not phone number country selection
-            if (!userLocation) {
-                console.warn('[Calendly] No location detected, not showing Calendly');
-                return false;
-            }
-
-            // Convert location to lowercase for comparison
-            const locationLower = userLocation.toLowerCase();
-            const isEligible = CONFIG.calendlyEligibleCountries.includes(locationLower);
-            
-            console.debug('[Calendly] User Location:', locationLower, 'Eligible:', isEligible);
-            
-            return isEligible;
-        },
-
-        getVisitHistory() {
-            try {
-                const visitHistoryData = localStorage.getItem('ghost-history');
-                if (!visitHistoryData) return [];
-
-                const parsedHistory = JSON.parse(visitHistoryData);
-                const origin = window?.location?.origin || '';
-
-                // Format history to match expected structure
-                // localStorage format: { path, time, referrerSource, referrerMedium, referrerUrl }
-                // API format: { page, timestamp, referrerSource, referrerMedium, referrerUrl }
-                return parsedHistory.map(item => ({
-                    page: item.path ? `${origin}${item.path}` : (item.url || item.page || ''),
-                    timestamp: item.time ? new Date(item.time).toISOString() : (item.timestamp || new Date().toISOString()),
-                    referrerMedium: item.referrerMedium || null,
-                    referrerUrl: item.referrerUrl || null,
-                    referrerSource: item.referrerSource || null
-                }));
-            } catch (error) {
-                console.error('Error parsing visit history:', error);
-                return [];
-            }
-        },
-
-        getLeadCategory(service) {
-            const categoryMap = {
-                'hire-va': 'Hire a Virtual Assistant',
-                'hire-bookkeeper': 'Hire a Bookkeeper',
-                'looking-job': "I'm looking for a job"
-            };
-            return categoryMap[service] || service;
-        },
-
-        getVaOrClient(service) {
-            // For both hire-va and hire-bookkeeper, return "I want to hire a Virtual Assistant"
-            // For looking-job, return "I'm looking for a job"
-            if (service === 'hire-va' || service === 'hire-bookkeeper') {
-                return 'I want to hire a Virtual Assistant';
-            } else if (service === 'looking-job') {
-                return "I want to work as a Virtual Assistant";
-            }
-            return 'I want to hire a Virtual Assistant'; // Default
-        },
-
-        async getUserIP() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip || '';
-            } catch (error) {
-                console.error('Error fetching IP:', error);
-                return '';
-            }
-        },
-
         async submitToBackend(formData) {
-            const apiEndpoint = 'https://app-dev.wishup.co/api/public/lead/create';
+            // Replace with your actual API endpoint
+            const apiEndpoint = '/api/submit-application'; // or your full URL
             
             try {
-                // Get user IP
-                const userIP = await this.getUserIP();
-
-                // Get visit history
-                const pageVisits = this.getVisitHistory();
-
-                // Map service to lead category
-                const leadCategory = this.getLeadCategory(formData.service);
-                
-                // Map service to va_or_client field
-                const vaOrClient = this.getVaOrClient(formData.service);
-
-                // Get country code: Use phone input selected country if user changed it, otherwise use IP-detected country
-                let countryCode = null;
-                
-                console.log('[API] ===== COUNTRY CODE DEBUG =====');
-                console.log('[API] formData.phoneCountry:', formData.phoneCountry);
-                console.log('[API] formData.phoneCountry type:', typeof formData.phoneCountry);
-                console.log('[API] formData.phoneCountry.trim():', formData.phoneCountry ? formData.phoneCountry.trim() : 'N/A');
-                console.log('[API] formData.country:', formData.country);
-                console.log('[API] formData.country type:', typeof formData.country);
-                console.log('[API] LocationDetector.userCountry:', LocationDetector.userCountry);
-                
-                if (formData.phoneCountry && formData.phoneCountry.trim() !== '') {
-                    // User selected a country in phone input - use that (already lowercase ISO2 like 'us', 'in', 'au')
-                    countryCode = formData.phoneCountry.toLowerCase();
-                    console.log('[API] Using phoneCountry (user selected):', countryCode);
-                } else if (formData.country) {
-                    // Use IP-detected country from Cloudflare trace (uppercase like 'US', 'IN' - convert to lowercase)
-                    countryCode = formData.country.toLowerCase();
-                    console.log('[API] Using formData.country (IP-detected):', countryCode);
-                } else {
-                    console.log('[API] No country available - countryCode will be null');
-                }
-
-                console.log('[API] Final countryCode:', countryCode);
-                console.log('[API] ================================');
-
-                // Get phone number - remove + sign but keep country code digits
-                let phoneNumber = null;
-                if (formData.phone && formData.phone.trim() !== '') {
-                    // Remove + sign, spaces, dashes, parentheses - keep only digits
-                    phoneNumber = formData.phone.replace(/[\+\s\-\(\)]/g, '');
-                    // If after cleaning it's empty, set to null
-                    if (!phoneNumber || phoneNumber.length === 0) {
-                        phoneNumber = null;
-                    }
-                }
-
-                console.log('[API Payload Debug]');
-                console.log('- formData.phone:', formData.phone);
-                console.log('- Cleaned phoneNumber (no +):', phoneNumber);
-                console.log('- countryCode:', countryCode);
-
-                // Prepare payload matching the expected format exactly
-                const payload = {
-                    first_name: formData.firstName || null,
-                    last_name: formData.lastName || null,
-                    lead_category: leadCategory || null,
-                    email: formData.email || null,
-                    va_or_client: vaOrClient || null,
-                    phone: phoneNumber,
-                    tell_us_more: formData.experience || null,
-                    country_code: countryCode,
-                    triggerSource: window.location.href || null,
-                    lead_title: "N.A",
-                    whatsapp_consent: false,
-                    source: window.location.href || null,
-                    page_visits: pageVisits || [],
-                    ip: userIP || null
-                };
-
-                console.log('[API] Full payload:', JSON.stringify(payload, null, 2));
-
                 const response = await fetch(apiEndpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(formData)
                 });
-
-                if (!response.ok) {
-                    throw new Error(`API responded with status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('Form submitted successfully:', result);
                 
-                utils.showMessage('Thanks for your interest!', 'success');
-                return result;
+                console.log('Form submitted to API');
+                return response;
             } catch (error) {
+                // Don't throw - we don't want to block Calendly from opening
                 console.error('API submission failed:', error);
-                throw error;
+                return null;
             }
         }
     };
@@ -919,34 +450,6 @@
             triggers.forEach(trigger => {
                 trigger.addEventListener('click', () => this.open());
             });
-
-            // Handle mobile floating button trigger
-            const mobileTrigger = utils.getElement('#mobile-form-trigger');
-            if (mobileTrigger) {
-                console.debug('[Modal] Mobile trigger button found, attaching click handler');
-                mobileTrigger.addEventListener('click', () => {
-                    console.debug('[Modal] Mobile trigger clicked, opening modal');
-                    this.open();
-                });
-            } else {
-                console.warn('[Modal] Mobile trigger button not found');
-            }
-
-            // Handle mobile consultation button (new site-wide button)
-            const mobileConsultationTrigger = utils.getElement('#mobile-consultation-trigger');
-            if (mobileConsultationTrigger) {
-                console.debug('[Modal] Mobile consultation trigger found, attaching click handler');
-                mobileConsultationTrigger.addEventListener('click', () => {
-                    console.debug('[Modal] Mobile consultation trigger clicked, opening modal');
-                    this.open();
-                });
-            }
-
-            // Handle close button in modal
-            const closeBtn = utils.getElement('#form-close');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => this.close());
-            }
 
             const modal = utils.getElement('.form-modal');
             if (modal) {
@@ -964,7 +467,7 @@
                     }
                 });
 
-                // Add close button if not exists (legacy support)
+                // Add close button if not exists
                 this.addCloseButton();
             }
 
@@ -1005,30 +508,16 @@
 
         open() {
             const modal = utils.getElement('.form-modal');
-            console.debug('[Modal] Opening modal, modal element found:', !!modal);
             if (modal) {
-                // Remove inline display: none and set display: flex
-                modal.style.display = 'flex';
-                // Trigger opacity transition after display change
-                requestAnimationFrame(() => {
-                    modal.classList.add('active');
-                });
+                modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                console.debug('[Modal] Modal opened, active class added');
-            } else {
-                console.error('[Modal] Modal element not found');
             }
         },
 
         close() {
             const modal = utils.getElement('.form-modal');
-            console.debug('[Modal] Closing modal');
             if (modal) {
                 modal.classList.remove('active');
-                // Wait for transition before hiding
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                }, 300); // Match CSS transition duration
                 document.body.style.overflow = '';
             }
         }
