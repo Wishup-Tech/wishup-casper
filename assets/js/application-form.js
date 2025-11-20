@@ -653,20 +653,8 @@
                 if (isModalForm && modal) {
                     console.debug('[Form] Closing modal now - Element ID:', modal.id);
                     
-                    // Remove active class to trigger CSS transition
-                    modal.classList.remove('active');
-                    console.debug('[Form] Removed active class from modal');
-                    
-                    // Set opacity to 0 for fade out
-                    modal.style.opacity = '0';
-                    
-                    // After CSS transition, set display none
-                    setTimeout(() => {
-                        modal.style.display = 'none';
-                        console.debug('[Form] Modal display set to none');
-                    }, 300);
-                    
-                    document.body.style.overflow = '';
+                    // Use ModalHandler.close() for consistent modal closing
+                    ModalHandler.close();
                 } else {
                     console.debug('[Form] Not a modal form - skipping modal close');
                 }
@@ -811,7 +799,7 @@
         },
 
         async submitToBackend(formData) {
-            const apiEndpoint = 'https://app-dev.wishup.co/api/public/lead/create';
+            const apiEndpoint = 'https://app.wishup.co/api/public/lead/create';
             
             try {
                 // Get user IP
@@ -1009,6 +997,8 @@
             if (modal) {
                 // Remove inline display: none and set display: flex
                 modal.style.display = 'flex';
+                // Clear any inline opacity set during close
+                modal.style.opacity = '';
                 // Trigger opacity transition after display change
                 requestAnimationFrame(() => {
                     modal.classList.add('active');
