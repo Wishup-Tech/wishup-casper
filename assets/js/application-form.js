@@ -119,7 +119,6 @@
             if (phoneInput && this.userCountry) {
                 const countryCode = this.userCountry.toLowerCase();
                 phoneInput.setCountry(countryCode);
-                console.debug('[Location] Set phone country to:', countryCode);
             }
         }
     };
@@ -227,8 +226,6 @@
                 showFlags: true,
                 showSelectedDialCode: true
             });
-
-            console.debug('[Form] Phone input initialized');
         },
 
         setupEventListeners() {
@@ -375,7 +372,6 @@
             const isMobileView = (typeof window !== 'undefined') && window.innerWidth <= 968;
 
             if (!isMobileView) {
-                console.debug('[Form] Opening Calendly after submission (desktop view)');
                 if (typeof window.openCalendly === 'function') {
                     window.openCalendly(calendlyUrl, {
                         name: formData.name,
@@ -383,8 +379,6 @@
                         phone: fullPhoneNumber // Pass full international number
                     });
                 }
-            } else {
-                console.debug('[Form] Mobile view detected - skipping Calendly open');
             }
 
             // Reset form and hide loading after short delay
@@ -433,7 +427,6 @@
                     body: JSON.stringify(formData)
                 });
                 
-                console.log('Form submitted to API');
                 return response;
             } catch (error) {
                 // Don't throw - we don't want to block Calendly from opening
@@ -489,7 +482,6 @@
                     || trigger?.getAttribute('data-calendly-url')
                     || 'https://calendly.com/neelesh-rangwani-wishup/30min';
 
-                console.debug('[Modal] Calendly button clicked, URL:', calendlyUrl);
                 openCalendlyFromForm(calendlyUrl);
             });
         },
@@ -535,8 +527,6 @@
         
         // Get full international phone number from intl-tel-input
         const fullPhone = phoneInput ? phoneInput.getNumber() : '';
-
-        console.debug('[Form] Opening Calendly with form data:', { name, email, phone: fullPhone });
 
         if (typeof window.openCalendly === 'function') {
             window.openCalendly(calendlyUrl, { name, email, phone: fullPhone });
