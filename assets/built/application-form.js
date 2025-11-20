@@ -106,51 +106,19 @@
         },
 
         setDefaultService() {
-            // Set default service for ALL forms on the page
-            const serviceSelects = utils.getElements('#form-service');
-            serviceSelects.forEach(serviceSelect => {
-                if (serviceSelect && (!serviceSelect.value || serviceSelect.value === '')) {
-                    const defaultValue = this.isIndia ? CONFIG.defaultServiceIndia : CONFIG.defaultServiceOthers;
-                    serviceSelect.value = defaultValue;
-                    
-                    // Update button text for this form
-                    const form = serviceSelect.closest('form');
-                    if (form) {
-                        const submitBtn = form.querySelector('#submit-btn .btn-text');
-                        if (submitBtn) {
-                            let text = 'Submit';
-                            if (defaultValue === 'looking-job') {
-                                text = 'Apply Now';
-                            } else if (defaultValue === 'hire-va' || defaultValue === 'hire-bookkeeper') {
-                                text = 'Get Free Consultation';
-                            }
-                            submitBtn.textContent = text;
-                        }
-                    }
-                }
-            });
+            const serviceSelect = utils.getElement('#form-service');
+            if (serviceSelect && (!serviceSelect.value || serviceSelect.value === '')) {
+                const defaultValue = this.isIndia ? CONFIG.defaultServiceIndia : CONFIG.defaultServiceOthers;
+                serviceSelect.value = defaultValue;
+                FormHandler.updateButtonText(defaultValue);
+            }
         },
 
         setPhoneCountry() {
-            // Set the country for ALL phone input instances based on detected location
-            if (this.userCountry) {
+            // Set the country for intl-tel-input based on detected location
+            if (phoneInput && this.userCountry) {
                 const countryCode = this.userCountry.toLowerCase();
-                
-                // Set country for the main phoneInput instance
-                if (phoneInput) {
-                    phoneInput.setCountry(countryCode);
-                    console.debug('[Location] Set main phone country to:', countryCode);
-                }
-                
-                // Set country for all other instances
-                if (window.phoneInputInstances && window.phoneInputInstances.length > 0) {
-                    window.phoneInputInstances.forEach((instance, index) => {
-                        if (instance) {
-                            instance.setCountry(countryCode);
-                            console.debug(`[Location] Set phone instance ${index + 1} country to:`, countryCode);
-                        }
-                    });
-                }
+                phoneInput.setCountry(countryCode);
             }
         }
     };
@@ -176,49 +144,18 @@
 
         validatePhone(value) {
             if (!phoneInput) {
-                console.log('[Validation] Phone input not initialized');
                 return 'Phone input not initialized';
             }
 
-            // Get the raw input value (what user typed)
-            const rawValue = value || '';
-            
-            console.log('[Validation] Raw phone value:', rawValue);
-            console.log('[Validation] Raw phone value length:', rawValue.length);
-            
-            // Check if empty first
-            if (rawValue === '' || rawValue.trim() === '') {
-                console.log('[Validation] Phone is empty');
+            if (!value || value.trim() === '') {
                 return 'Please enter your phone number';
             }
 
-            // Get the full number with country code from intl-tel-input
-            const fullNumber = phoneInput.getNumber();
-            console.log('[Validation] Full number from library:', fullNumber);
-            
-            // Get just the national number (without country code)
-            const nationalNumber = rawValue.replace(/[\s\-\(\)]/g, '');
-            console.log('[Validation] National number (cleaned):', nationalNumber);
-            console.log('[Validation] National number length:', nationalNumber.length);
-            
-            // Validate: only digits allowed in the input
-            if (!/^\d+$/.test(nationalNumber)) {
-                console.log('[Validation] Failed - contains non-digits');
-                return 'Phone number can only contain digits';
-            }
-            
-            // Check length of the actual phone number (excluding country code)
-            if (nationalNumber.length > 15) {
-                console.log('[Validation] Failed - too long:', nationalNumber.length);
-                return 'Phone number cannot exceed 15 digits';
-            }
-            
-            if (nationalNumber.length < 7) {
-                console.log('[Validation] Failed - too short:', nationalNumber.length);
-                return 'Phone number must be at least 7 digits';
+            // Use intl-tel-input's built-in validation
+            if (!phoneInput.isValidNumber()) {
+                return 'Please enter a valid phone number for the selected country';
             }
 
-            console.log('[Validation] Passed - phone is valid');
             return null;
         },
 
@@ -229,7 +166,7 @@
             return null;
         },
 
-        validateForm(formData, formElement) {
+        validateForm(formData) {
             const errors = {};
             
             const serviceError = this.validateService(formData.service);
@@ -241,25 +178,18 @@
             const emailError = this.validateEmail(formData.email);
             if (emailError) errors.email = emailError;
             
-            // Get the raw phone input value for validation from THIS form
-            const phoneInputElement = formElement ? formElement.querySelector('#form-phone') : document.querySelector('#form-phone');
-            const rawPhoneValue = phoneInputElement ? phoneInputElement.value : '';
-            const phoneError = this.validatePhone(rawPhoneValue);
+            const phoneError = this.validatePhone(formData.phone);
             if (phoneError) errors.phone = phoneError;
             
             return errors;
         }
     };
 
-    const MOBILE_SIDEFORM_BREAKPOINT = 968;
-
     // Form handler
     const FormHandler = {
         init() {
             const form = utils.getElement('#wishup-form');
             if (!form) return;
-
-            this.removeUnusedForms();
 
             // Initialize intl-tel-input
             this.initPhoneInput();
@@ -271,27 +201,10 @@
             LocationDetector.init();
         },
 
-        removeUnusedForms() {
-            const isMobile = window.innerWidth <= MOBILE_SIDEFORM_BREAKPOINT;
-            if (!isMobile) {
-                return;
-            }
-
-            const forms = Array.from(utils.getElements('#wishup-form'));
-            forms.forEach(form => {
-                const wrapper = form.closest('.wishup-application-form');
-                const mode = wrapper?.dataset?.formMode || 'inline';
-                if (mode === 'sidebar') {
-                    wrapper?.remove();
-                }
-            });
-        },
-
         initPhoneInput() {
-            // Find all phone inputs on the page
-            const inputs = document.querySelectorAll("#form-phone");
-            if (!inputs || inputs.length === 0) {
-                console.warn('[Form] No phone inputs found');
+            const input = document.querySelector("#form-phone");
+            if (!input) {
+                console.warn('[Form] Phone input not found');
                 return;
             }
 
@@ -301,118 +214,34 @@
                 return;
             }
 
-            // Store all instances for later use
-            window.phoneInputInstances = window.phoneInputInstances || [];
-
-            // Initialize phone input on each form
-            inputs.forEach((input, index) => {
-                // Skip if already initialized
-                if (input.classList.contains('iti__input')) {
-                    console.debug('[Form] Phone input already initialized, skipping');
-                    return;
-                }
-
-                const isInModal = input.closest('.form-modal');
-                const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
-                const dropdownContainer = (isInModal && isMobileViewport) ? document.body : null;
-
-                const phoneInputInstance = window.intlTelInput(input, {
-                    initialCountry: 'in', // Will be updated by LocationDetector
-                    preferredCountries: ['in', 'us', 'gb', 'au'],
-                    separateDialCode: true,
-                    utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.1/build/js/utils.js',
-                    autoPlaceholder: 'aggressive',
-                    formatOnDisplay: false, // Disable auto-formatting to allow only digits
-                    nationalMode: false,
-                    countrySearch: true, // Enable search box in dropdown
-                    showFlags: true,
-                    showSelectedDialCode: true,
-                    dropdownContainer: dropdownContainer
-                });
-
-                if (dropdownContainer === document.body) {
-                    const repositionDropdown = () => {
-                        const dropdown = document.querySelector('body > .iti__country-list');
-                        if (!dropdown) return;
-                        const rect = input.getBoundingClientRect();
-                        dropdown.style.width = `${rect.width}px`;
-                        dropdown.style.top = `${rect.bottom + window.scrollY + 6}px`;
-                        dropdown.style.left = `${rect.left + window.scrollX}px`;
-                        dropdown.style.position = 'fixed';
-                        dropdown.style.zIndex = '100002';
-                    };
-
-                    const scheduleReposition = () => requestAnimationFrame(repositionDropdown);
-                    input.addEventListener('click', scheduleReposition);
-                    input.addEventListener('focus', scheduleReposition);
-                    window.addEventListener('scroll', scheduleReposition, { passive: true });
-                    window.addEventListener('resize', scheduleReposition);
-                }
-
-                // Store instance
-                window.phoneInputInstances.push(phoneInputInstance);
-
-                // Store the first instance as the main phoneInput for validation
-                if (index === 0 || !phoneInput) {
-                    phoneInput = phoneInputInstance;
-                }
-
-                // Restrict phone input to numbers only
-                input.addEventListener('input', (e) => {
-                    // Remove any non-digit characters (spaces, dashes, parentheses, etc.)
-                    const cleaned = e.target.value.replace(/[^\d]/g, '');
-                    e.target.value = cleaned;
-                    console.log('[Phone Input] Cleaned value:', cleaned);
-                });
-
-                // Prevent non-numeric keypress (except special keys)
-                input.addEventListener('keypress', (e) => {
-                    // Allow only digits (0-9) and special keys
-                    if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
-                        e.preventDefault();
-                    }
-                });
-
-                console.debug(`[Form] Phone input ${index + 1} initialized`);
+            phoneInput = window.intlTelInput(input, {
+                initialCountry: 'in', // Will be updated by LocationDetector
+                preferredCountries: ['in', 'us', 'gb', 'au'],
+                separateDialCode: true,
+                utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.1/build/js/utils.js',
+                autoPlaceholder: 'aggressive',
+                formatOnDisplay: true,
+                nationalMode: false,
+                countrySearch: false, // Disable search box in dropdown
+                showFlags: true,
+                showSelectedDialCode: true
             });
-
-            console.debug('[Form] Phone input initialized');
         },
 
         setupEventListeners() {
-            // Get all forms on the page (modal, sidebar, inline)
-            const forms = utils.getElements('#wishup-form');
+            const form = utils.getElement('#wishup-form');
             
-            forms.forEach(form => {
-                // Form submission - pass the form element to handleSubmit
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handleSubmit(e.target);
-                });
-
-                // Service selection change - update button text for this specific form
-                const serviceSelect = form.querySelector('#form-service');
-                const submitBtn = form.querySelector('#submit-btn .btn-text');
-                
-                if (serviceSelect && submitBtn) {
-                    serviceSelect.addEventListener('change', (e) => {
-                        const service = e.target.value;
-                        let text = 'Submit';
-                        if (service === 'looking-job') {
-                            text = 'Apply Now';
-                        } else if (service === 'hire-va' || service === 'hire-bookkeeper') {
-                            text = 'Get Free Consultation';
-                        }
-                        submitBtn.textContent = text;
-                    });
-                }
+            // Form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleSubmit();
             });
 
-            // Real-time validation on blur - for all inputs across all forms
+            // Real-time validation on blur
             const inputs = ['form-name', 'form-email', 'form-phone', 'form-service'];
             inputs.forEach(id => {
-                const inputElements = utils.getElements(`#${id}`);
-                inputElements.forEach(input => {
+                const input = utils.getElement(`#${id}`);
+                if (input) {
                     input.addEventListener('blur', () => {
                         this.validateField(id);
                     });
@@ -420,25 +249,25 @@
                     input.addEventListener('input', () => {
                         utils.clearError(id.replace('form-', ''));
                     });
-                });
+                }
             });
+
+            // Service selection change - update button text
+            const serviceSelect = utils.getElement('#form-service');
+            if (serviceSelect) {
+                serviceSelect.addEventListener('change', (e) => {
+                    this.updateButtonText(e.target.value);
+                });
+            }
         },
 
         validateField(fieldId) {
             const input = utils.getElement(`#${fieldId}`);
             if (!input) return;
 
+            const value = input.value.trim();
             const field = fieldId.replace('form-', '');
-            let value, error = null;
-
-            // For phone field, get the actual input value without trimming
-            // because intl-tel-input manages the input
-            if (field === 'phone') {
-                value = input.value; // Don't trim phone - may have formatting
-                console.log('[validateField] Phone input value:', value);
-            } else {
-                value = input.value.trim();
-            }
+            let error = null;
 
             switch(field) {
                 case 'name':
@@ -479,115 +308,55 @@
             }
         },
 
-        async handleSubmit(formElement) {
+        async handleSubmit() {
             // Clear previous messages
-            const messageEl = formElement.querySelector('#form-message');
+            const messageEl = utils.getElement('#form-message');
             if (messageEl) messageEl.classList.remove('visible');
 
-            // Get the raw phone input value from THIS form
-            const phoneInputElement = formElement.querySelector('#form-phone');
-            const rawPhoneValue = phoneInputElement ? phoneInputElement.value.trim() : '';
-            
-            console.log('[handleSubmit] Raw phone input value:', rawPhoneValue);
-            console.log('[handleSubmit] Form element:', formElement);
-            
-            const nameValue = formElement.querySelector('#form-name').value.trim();
-            const nameParts = nameValue.split(' ');
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts.slice(1).join(' ') || '';
+            // Get full phone number with country code from intl-tel-input
+            const fullPhoneNumber = phoneInput ? phoneInput.getNumber() : '';
 
-            // Get phoneInput instance for this form
-            const phoneInputInstance = phoneInputElement && window.phoneInputInstances ? 
-                window.phoneInputInstances.find(instance => instance.telInput === phoneInputElement) : 
-                phoneInput;
-
-            // Get form data from THIS form
+            // Get form data
             const formData = {
-                service: formElement.querySelector('#form-service').value,
-                name: nameValue,
-                firstName: firstName,
-                lastName: lastName,
-                email: formElement.querySelector('#form-email').value.trim(),
-                phone: rawPhoneValue, // Raw phone digits (e.g., 1234567890)
-                phoneCountryCode: phoneInputInstance ? phoneInputInstance.getSelectedCountryData().dialCode : '',
-                phoneCountry: phoneInputInstance ? phoneInputInstance.getSelectedCountryData().iso2 : '',
-                experience: formElement.querySelector('#form-experience').value.trim(),
+                service: utils.getElement('#form-service').value,
+                name: utils.getElement('#form-name').value.trim(),
+                email: utils.getElement('#form-email').value.trim(),
+                phone: fullPhoneNumber, // Full international format (e.g., +911234567890)
+                phoneCountryCode: phoneInput ? phoneInput.getSelectedCountryData().dialCode : '',
+                phoneCountry: phoneInput ? phoneInput.getSelectedCountryData().iso2 : '',
+                experience: utils.getElement('#form-experience').value.trim(),
                 country: LocationDetector.userCountry,
                 isIndia: LocationDetector.isIndia,
                 submittedAt: new Date().toISOString()
             };
 
-            console.log('[handleSubmit] Full formData:', formData);
-
-            // Validate - pass formElement to get correct phone input
-            const errors = Validator.validateForm(formData, formElement);
+            // Validate
+            const errors = Validator.validateForm(formData);
             
             if (Object.keys(errors).length > 0) {
-                // Show all errors in THIS form
+                // Show all errors
                 Object.keys(errors).forEach(field => {
-                    const input = formElement.querySelector(`#form-${field}`);
-                    const error = formElement.querySelector(`#form-${field}-error`);
-                    
-                    if (input) input.classList.add('error');
-                    if (error) {
-                        error.textContent = errors[field];
-                        error.classList.add('visible');
-                    }
+                    utils.showError(field, errors[field]);
                 });
                 
-                // Focus first error field in THIS form
+                // Focus first error field
                 const firstErrorField = Object.keys(errors)[0];
-                const firstInput = formElement.querySelector(`#form-${firstErrorField}`);
-                if (firstInput) firstInput.focus();
+                utils.getElement(`#form-${firstErrorField}`).focus();
                 return;
             }
 
-            // Clear all errors in THIS form
+            // Clear all errors
             ['service', 'name', 'email', 'phone'].forEach(field => {
-                const input = formElement.querySelector(`#form-${field}`);
-                const error = formElement.querySelector(`#form-${field}-error`);
-                
-                if (input) input.classList.remove('error');
-                if (error) {
-                    error.textContent = '';
-                    error.classList.remove('visible');
-                }
+                utils.clearError(field);
             });
 
             // Show loading state
-            const submitBtn = formElement.querySelector('#submit-btn');
-            if (submitBtn) {
-                submitBtn.classList.add('loading');
-                submitBtn.disabled = true;
-            }
+            utils.setLoading(true);
 
-            // Submit to backend
-            try {
-                await this.submitToBackend(formData);
-                
-                // Show success message
-                const messageEl = formElement.querySelector('#form-message');
-                if (messageEl) {
-                    messageEl.textContent = 'Form submitted successfully!';
-                    messageEl.className = 'form-message visible success';
-                }
-            } catch (error) {
+            // Submit to backend (don't wait for response)
+            this.submitToBackend(formData).catch(error => {
                 console.error('Form submission error:', error);
-                
-                // Show error message
-                const messageEl = formElement.querySelector('#form-message');
-                if (messageEl) {
-                    messageEl.textContent = 'An error occurred. Please try again.';
-                    messageEl.className = 'form-message visible error';
-                }
-                
-                // Hide loading
-                if (submitBtn) {
-                    submitBtn.classList.remove('loading');
-                    submitBtn.disabled = false;
-                }
-                return;
-            }
+            });
 
             // Track submission (if analytics is available)
             if (window.gtag) {
@@ -597,51 +366,35 @@
                 });
             }
 
-            // Construct phone number for Calendly (country code + phone, no + sign)
-            // Example: +911234567890 becomes 911234567890
-            let fullPhoneNumber = '';
-            if (phoneInputInstance && phoneInputInstance.getNumber()) {
-                // Remove the + sign from the international number
-                fullPhoneNumber = phoneInputInstance.getNumber().replace(/\+/g, '');
-            } else if (formData.phoneCountryCode && rawPhoneValue) {
-                // Construct manually: country code + raw phone value (no + sign)
-                fullPhoneNumber = `${formData.phoneCountryCode}${rawPhoneValue}`;
-            } else {
-                fullPhoneNumber = rawPhoneValue || '';
-            }
-
-            // Open Calendly with form data (both desktop and mobile)
+            // Open Calendly immediately with form data on desktop only.
+            // On mobile we show the form modal / thank-you flow but do NOT open Calendly directly.
             const calendlyUrl = this.getCalendlyUrl();
-            console.debug('[Form] Opening Calendly after submission');
-            console.debug('[Form] Phone for Calendly (no +):', fullPhoneNumber);
-            
-            if (typeof window.openCalendly === 'function') {
-                window.openCalendly(calendlyUrl, {
-                    name: formData.name,
-                    email: formData.email,
-                    phone: fullPhoneNumber // Pass phone without + sign
-                });
+            const isMobileView = (typeof window !== 'undefined') && window.innerWidth <= 968;
+
+            if (!isMobileView) {
+                if (typeof window.openCalendly === 'function') {
+                    window.openCalendly(calendlyUrl, {
+                        name: formData.name,
+                        email: formData.email,
+                        phone: fullPhoneNumber // Pass full international number
+                    });
+                }
             }
 
             // Reset form and hide loading after short delay
             setTimeout(() => {
-                // Hide loading
-                if (submitBtn) {
-                    submitBtn.classList.remove('loading');
-                    submitBtn.disabled = false;
-                }
-                formElement.reset();
+                utils.setLoading(false);
+                utils.getElement('#wishup-form').reset();
                 
-                // Reset phone input for this form
-                if (phoneInputInstance) {
-                    phoneInputInstance.setNumber('');
+                // Reset phone input
+                if (phoneInput) {
+                    phoneInput.setNumber('');
                 }
                 
-                // Reset default service for all forms
                 LocationDetector.setDefaultService();
                 
-                // Close modal if this form is in a modal
-                const modal = formElement.closest('.form-modal');
+                // Close modal if open
+                const modal = utils.getElement('.form-modal');
                 if (modal && modal.classList.contains('active')) {
                     modal.classList.remove('active');
                     document.body.style.overflow = '';
@@ -661,120 +414,24 @@
                 || 'https://calendly.com/neelesh-rangwani-wishup/30min';
         },
 
-        getVisitHistory() {
-            try {
-                const visitHistoryData = localStorage.getItem('ghost-history');
-                if (!visitHistoryData) return [];
-
-                const parsedHistory = JSON.parse(visitHistoryData);
-                const origin = window?.location?.origin || '';
-
-                // Format history to match expected structure
-                return parsedHistory.map(item => ({
-                    page: item.url || item.page || '',
-                    timestamp: item.timestamp || new Date().toISOString(),
-                    referrerMedium: item.referrerMedium || null,
-                    referrerUrl: item.referrerUrl || null,
-                    referrerSource: item.referrerSource || null
-                }));
-            } catch (error) {
-                console.error('Error parsing visit history:', error);
-                return [];
-            }
-        },
-
-        getLeadCategory(service) {
-            const categoryMap = {
-                'hire-va': 'Hire a Virtual Assistant',
-                'hire-bookkeeper': 'Hire a Bookkeeper',
-                'looking-job': "I'm looking for a job"
-            };
-            return categoryMap[service] || service;
-        },
-
-        async getUserIP() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip || '';
-            } catch (error) {
-                console.error('Error fetching IP:', error);
-                return '';
-            }
-        },
-
         async submitToBackend(formData) {
-            const apiEndpoint = 'http://localhost:1337/api/public/lead/create';
+            // Replace with your actual API endpoint
+            const apiEndpoint = '/api/submit-application'; // or your full URL
             
             try {
-                // Get user IP
-                const userIP = await this.getUserIP();
-
-                // Get visit history
-                const pageVisits = this.getVisitHistory();
-
-                // Map service to lead category
-                const leadCategory = this.getLeadCategory(formData.service);
-
-                // Get country code in lowercase
-                const countryCode = formData.phoneCountry ? formData.phoneCountry.toLowerCase() : null;
-
-                // Get phone number - remove + sign but keep country code digits
-                let phoneNumber = null;
-                if (formData.phone && formData.phone.trim() !== '') {
-                    // Remove + sign, spaces, dashes, parentheses - keep only digits
-                    phoneNumber = formData.phone.replace(/[\+\s\-\(\)]/g, '');
-                    // If after cleaning it's empty, set to null
-                    if (!phoneNumber || phoneNumber.length === 0) {
-                        phoneNumber = null;
-                    }
-                }
-
-                console.log('[API Payload Debug]');
-                console.log('- formData.phone:', formData.phone);
-                console.log('- Cleaned phoneNumber (no +):', phoneNumber);
-                console.log('- countryCode:', countryCode);
-
-                // Prepare payload matching the expected format exactly
-                const payload = {
-                    first_name: formData.firstName || null,
-                    last_name: formData.lastName || null,
-                    lead_category: leadCategory || null,
-                    email: formData.email || null,
-                    va_or_client: leadCategory || null,
-                    phone: phoneNumber,
-                    tell_us_more: formData.experience || null,
-                    country_code: countryCode,
-                    triggerSource: 'Blogs',
-                    lead_title: null,
-                    whatsapp_consent: false,
-                    source: window.location.href || null,
-                    page_visits: pageVisits || [],
-                    ip: userIP || null
-                };
-
-                console.log('[API] Full payload:', JSON.stringify(payload, null, 2));
-
                 const response = await fetch(apiEndpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(formData)
                 });
-
-                if (!response.ok) {
-                    throw new Error(`API responded with status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('Form submitted successfully:', result);
                 
-                utils.showMessage('Form submitted successfully!', 'success');
-                return result;
+                return response;
             } catch (error) {
+                // Don't throw - we don't want to block Calendly from opening
                 console.error('API submission failed:', error);
-                throw error;
+                return null;
             }
         }
     };
@@ -786,34 +443,6 @@
             triggers.forEach(trigger => {
                 trigger.addEventListener('click', () => this.open());
             });
-
-            // Handle mobile floating button trigger
-            const mobileTrigger = utils.getElement('#mobile-form-trigger');
-            if (mobileTrigger) {
-                console.debug('[Modal] Mobile trigger button found, attaching click handler');
-                mobileTrigger.addEventListener('click', () => {
-                    console.debug('[Modal] Mobile trigger clicked, opening modal');
-                    this.open();
-                });
-            } else {
-                console.warn('[Modal] Mobile trigger button not found');
-            }
-
-            // Handle mobile consultation button (new site-wide button)
-            const mobileConsultationTrigger = utils.getElement('#mobile-consultation-trigger');
-            if (mobileConsultationTrigger) {
-                console.debug('[Modal] Mobile consultation trigger found, attaching click handler');
-                mobileConsultationTrigger.addEventListener('click', () => {
-                    console.debug('[Modal] Mobile consultation trigger clicked, opening modal');
-                    this.open();
-                });
-            }
-
-            // Handle close button in modal
-            const closeBtn = utils.getElement('#form-close');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => this.close());
-            }
 
             const modal = utils.getElement('.form-modal');
             if (modal) {
@@ -831,7 +460,7 @@
                     }
                 });
 
-                // Add close button if not exists (legacy support)
+                // Add close button if not exists
                 this.addCloseButton();
             }
 
@@ -853,7 +482,6 @@
                     || trigger?.getAttribute('data-calendly-url')
                     || 'https://calendly.com/neelesh-rangwani-wishup/30min';
 
-                console.debug('[Modal] Calendly button clicked, URL:', calendlyUrl);
                 openCalendlyFromForm(calendlyUrl);
             });
         },
@@ -872,30 +500,16 @@
 
         open() {
             const modal = utils.getElement('.form-modal');
-            console.debug('[Modal] Opening modal, modal element found:', !!modal);
             if (modal) {
-                // Remove inline display: none and set display: flex
-                modal.style.display = 'flex';
-                // Trigger opacity transition after display change
-                requestAnimationFrame(() => {
-                    modal.classList.add('active');
-                });
+                modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                console.debug('[Modal] Modal opened, active class added');
-            } else {
-                console.error('[Modal] Modal element not found');
             }
         },
 
         close() {
             const modal = utils.getElement('.form-modal');
-            console.debug('[Modal] Closing modal');
             if (modal) {
                 modal.classList.remove('active');
-                // Wait for transition before hiding
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                }, 300); // Match CSS transition duration
                 document.body.style.overflow = '';
             }
         }
@@ -913,8 +527,6 @@
         
         // Get full international phone number from intl-tel-input
         const fullPhone = phoneInput ? phoneInput.getNumber() : '';
-
-        console.debug('[Form] Opening Calendly with form data:', { name, email, phone: fullPhone });
 
         if (typeof window.openCalendly === 'function') {
             window.openCalendly(calendlyUrl, { name, email, phone: fullPhone });

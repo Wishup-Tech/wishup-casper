@@ -6,7 +6,7 @@ on:
   # The push event is further specified to only occur on the 'WISHUP-Modifications' branch.
   push:
     branches:
-      - WISHUP-Modifications
+      - casper-lead-from-scratch-production
 
 # Jobs are a set of steps that execute on the same runner. You can define dependencies between jobs in the same workflow.
 jobs:
